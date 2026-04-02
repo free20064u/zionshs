@@ -9,10 +9,16 @@
             <div class="col-lg-6">
                 <span class="hero-tag">Admissions open for 2026/2027</span>
                 <h1>Raising confident learners for a changing world.</h1>
-                <p class="lead">Zion Heights School combines strong academics, character formation, and vibrant extracurricular life to help every student thrive.</p>
+                <p class="lead">WBM Zion SHS combines strong academics, character formation, and vibrant extracurricular life to help every student thrive.</p>
                 <div class="hero-actions">
-                    <a class="btn btn-primary btn-lg" href="{% url 'admissions' %}">Start Admission</a>
-                    <a class="btn btn-outline-light btn-lg" href="{% url 'academics' %}">Explore Academics</a>
+                    <a class="btn btn-primary btn-lg" href="{% url 'admissions' %}">
+                        <svg class="fa-icon btn-icon" aria-hidden="true"><use href="#fa-arrow-right"></use></svg>
+                        Start Admission
+                    </a>
+                    <a class="btn btn-outline-light btn-lg" href="{% url 'academics' %}">
+                        <svg class="fa-icon btn-icon" aria-hidden="true"><use href="#fa-book-open"></use></svg>
+                        Explore Academics
+                    </a>
                 </div>
             </div>
             <div class="col-lg-6">
@@ -21,6 +27,13 @@
                     <ul class="feature-stack">
                         {% for feature in features %}
                             <li>
+                                {% if forloop.counter == 1 %}
+                                    <span class="feature-icon"><svg class="fa-icon" aria-hidden="true"><use href="#fa-users"></use></svg></span>
+                                {% elif forloop.counter == 2 %}
+                                    <span class="feature-icon"><svg class="fa-icon" aria-hidden="true"><use href="#fa-flask"></use></svg></span>
+                                {% else %}
+                                    <span class="feature-icon"><svg class="fa-icon" aria-hidden="true"><use href="#fa-star"></use></svg></span>
+                                {% endif %}
                                 <h3>{{ feature.title }}</h3>
                                 <p>{{ feature.description }}</p>
                             </li>
@@ -38,6 +51,17 @@
             {% for stat in stats %}
                 <div class="col-6 col-lg-3">
                     <div class="stat-card">
+                        <span class="stat-icon-wrap">
+                            {% if forloop.counter == 1 %}
+                                <svg class="fa-icon" aria-hidden="true"><use href="#fa-graduation-cap"></use></svg>
+                            {% elif forloop.counter == 2 %}
+                                <svg class="fa-icon" aria-hidden="true"><use href="#fa-users"></use></svg>
+                            {% elif forloop.counter == 3 %}
+                                <svg class="fa-icon" aria-hidden="true"><use href="#fa-book-open"></use></svg>
+                            {% else %}
+                                <svg class="fa-icon" aria-hidden="true"><use href="#fa-trophy"></use></svg>
+                            {% endif %}
+                        </span>
                         <strong>{{ stat.value }}</strong>
                         <span>{{ stat.label }}</span>
                     </div>
@@ -57,6 +81,15 @@
             {% for programme in programmes %}
                 <div class="col-md-4">
                     <article class="info-card h-100">
+                        <span class="programme-icon">
+                            {% if forloop.counter == 1 %}
+                                <svg class="fa-icon" aria-hidden="true"><use href="#fa-star"></use></svg>
+                            {% elif forloop.counter == 2 %}
+                                <svg class="fa-icon" aria-hidden="true"><use href="#fa-book-open"></use></svg>
+                            {% else %}
+                                <svg class="fa-icon" aria-hidden="true"><use href="#fa-graduation-cap"></use></svg>
+                            {% endif %}
+                        </span>
                         <h3>{{ programme.title }}</h3>
                         <p>{{ programme.description }}</p>
                     </article>
@@ -76,6 +109,7 @@
             {% for item in news_items %}
                 <div class="col-md-6">
                     <article class="news-card h-100">
+                        <span class="news-icon"><svg class="fa-icon" aria-hidden="true"><use href="#fa-trophy"></use></svg></span>
                         <span class="news-date">{{ item.date }}</span>
                         <h3>{{ item.title }}</h3>
                         <p>{{ item.summary }}</p>

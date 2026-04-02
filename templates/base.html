@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{% static 'css/site.css' %}">
 </head>
 <body>
+    {% include 'includes/fa-icons.html' %}
     <header class="site-header">
         <nav class="navbar navbar-expand-lg">
             <div class="container">
@@ -83,6 +84,20 @@
                 <div class="col-md-4">
                     <h4>Visit Campus</h4>
                     <p>AMEZSS is a future-focused school community committed to academic excellence, character, and confident leadership.</p>
+                    <div class="social-links" aria-label="Social media links">
+                        <a class="social-link" href="#" aria-label="Facebook">
+                            <svg class="fa-icon" aria-hidden="true"><use href="#fa-facebook-f"></use></svg>
+                        </a>
+                        <a class="social-link" href="#" aria-label="Instagram">
+                            <svg class="fa-icon" aria-hidden="true"><use href="#fa-instagram"></use></svg>
+                        </a>
+                        <a class="social-link" href="#" aria-label="X">
+                            <svg class="fa-icon" aria-hidden="true"><use href="#fa-x-twitter"></use></svg>
+                        </a>
+                        <a class="social-link" href="#" aria-label="YouTube">
+                            <svg class="fa-icon" aria-hidden="true"><use href="#fa-youtube"></use></svg>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
