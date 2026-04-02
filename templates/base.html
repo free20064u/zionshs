@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}WBM Zion SHS{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{% static 'images/wbm-logo-white.png' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/site.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <img class="brand-logo" src="{% static 'images/wbm-logo-purple.png' %}" alt="WBM Zion SHS logo">
+                    <span>
+                        <strong>WBM Zion SHS</strong>
+                        <small>Welhelmin Bishop Memorial Zion Senior High School</small>
+                    </span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#primaryNav" aria-controls="primaryNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="primaryNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'academics' %}">Academics</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'admissions' %}">Admissions</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'news' %}">News</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+                        {% if request.user.is_authenticated %}
+                            <li class="nav-item"><span class="nav-link nav-user">Hi, {{ request.user.first_name|default:request.user.email }}</span></li>
+                            <li class="nav-item">
+                                <form action="{% url 'logout' %}" method="post" class="nav-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="nav-link nav-link-cta nav-button">Logout</button>
+                                </form>
+                            </li>
+                        {% else %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                            <li class="nav-item"><a class="nav-link nav-link-cta" href="{% url 'register' %}">Register</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {% if messages %}
+            <section class="container section-sm">
+                {% for message in messages %}
+                    <div class="alert alert-success">{{ message }}</div>
+                {% endfor %}
+            </section>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-5">
+                    <div class="footer-brand">
+                        <img class="footer-logo" src="{% static 'images/wbm-logo-white.png' %}" alt="WBM Zion SHS white logo">
+                        <div>
+                            <h3>WBM Zion SHS</h3>
+                            <p>Welhelmin Bishop Memorial Zion Senior High School, proudly nicknamed AMEZSS.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'about' %}">About Us</a></li>
+                        <li><a href="{% url 'academics' %}">Academics</a></li>
+                        <li><a href="{% url 'admissions' %}">Admissions</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h4>Visit Campus</h4>
+                    <p>AMEZSS is a future-focused school community committed to academic excellence, character, and confident leadership.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

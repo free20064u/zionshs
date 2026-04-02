@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}News | Zion Heights School{% endblock %}
+
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <span class="eyebrow">School News</span>
+        <h1>Updates, events, and achievements from our campus.</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="row g-4">
+            {% for item in news_items %}
+                <div class="col-lg-4">
+                    <article class="news-card h-100">
+                        <span class="news-date">{{ item.date }}</span>
+                        <h2>{{ item.title }}</h2>
+                        <p>{{ item.summary }}</p>
+                    </article>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

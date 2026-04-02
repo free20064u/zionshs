@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Logout | Zion Heights School{% endblock %}
+
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <span class="eyebrow">Sign Out</span>
+        <h1>Confirm that you want to sign out of your account.</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="auth-shell">
+            <div class="info-card auth-card">
+                <h2>Logout</h2>
+                <p>You are currently signed in. Click the button below to end your session securely.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-primary" type="submit">Confirm logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

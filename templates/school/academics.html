@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Academics | Zion Heights School{% endblock %}
+
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <span class="eyebrow">Academics</span>
+        <h1>A balanced curriculum that prepares students for life and leadership.</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="row g-4">
+            {% for programme in programmes %}
+                <div class="col-md-4">
+                    <article class="info-card h-100">
+                        <h2>{{ programme.title }}</h2>
+                        <p>{{ programme.description }}</p>
+                    </article>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section section-soft">
+    <div class="container">
+        <div class="section-heading">
+            <span class="eyebrow">Academic Highlights</span>
+            <h2>What makes our learning experience distinct.</h2>
+        </div>
+        <div class="row g-4">
+            {% for highlight in highlights %}
+                <div class="col-md-4">
+                    <div class="feature-panel">{{ highlight }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

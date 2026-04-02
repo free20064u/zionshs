@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Admissions | Zion Heights School{% endblock %}
+
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <span class="eyebrow">Admissions</span>
+        <h1>A clear and welcoming process for every family.</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-7">
+                <div class="info-card">
+                    <h2>How to apply</h2>
+                    <ol class="steps-list">
+                        {% for step in steps %}
+                            <li>{{ step }}</li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="info-card accent-card">
+                    <h3>Required documents</h3>
+                    <ul class="icon-list">
+                        {% for requirement in requirements %}
+                            <li>{{ requirement }}</li>
+                        {% endfor %}
+                    </ul>
+                    <a class="btn btn-light mt-3" href="{% url 'contact' %}">Book a Visit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

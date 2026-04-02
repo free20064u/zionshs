@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}About | Zion Heights School{% endblock %}
+
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <span class="eyebrow">About Us</span>
+        <h1>A school community shaped by excellence, warmth, and purpose.</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-6">
+                <h2>Our mission</h2>
+                <p>Zion Heights School exists to nurture learners who think clearly, serve responsibly, and grow into capable leaders. Our approach combines academic depth with personal care and strong family partnership.</p>
+            </div>
+            <div class="col-lg-6">
+                <div class="info-card">
+                    <h3>Core values</h3>
+                    <ul class="icon-list">
+                        {% for value in values %}
+                            <li>{{ value }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-soft">
+    <div class="container">
+        <div class="section-heading">
+            <span class="eyebrow">Our Story</span>
+            <h2>Growth marked by consistency and vision.</h2>
+        </div>
+        <div class="timeline">
+            {% for milestone in milestones %}
+                <div class="timeline-item">{{ milestone }}</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
