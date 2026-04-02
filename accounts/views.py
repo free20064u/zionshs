@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 from .forms import EmailAuthenticationForm, RegisterForm
@@ -10,7 +11,7 @@ def register_view(request):
         return redirect('home')
 
     if request.method == 'POST':
-        form = RegisterForm(request.POST)
+        form = RegisterForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
             login(request, user, backend='accounts.backends.EmailBackend')
@@ -45,3 +46,8 @@ def logout_view(request):
         return redirect('home')
 
     return render(request, 'accounts/logout.html')
+
+
+@login_required
+def profile_view(request):
+    return render(request, 'accounts/profile.html')

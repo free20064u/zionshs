@@ -16,7 +16,7 @@
             <div class="info-card auth-card">
                 <h2>Create your account</h2>
                 <p>Use your email address to register, sign in, and manage your school enquiries.</p>
-                <form method="post" novalidate>
+                <form method="post" enctype="multipart/form-data" novalidate>
                     {% csrf_token %}
                     {% if form.non_field_errors %}
                         <div class="text-danger small">{{ form.non_field_errors|striptags }}</div>

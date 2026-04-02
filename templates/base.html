@@ -33,7 +33,16 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'news' %}">News</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
                         {% if request.user.is_authenticated %}
-                            <li class="nav-item"><span class="nav-link nav-user">Hi, {{ request.user.first_name|default:request.user.email }}</span></li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-user nav-user-profile" href="{% url 'profile' %}">
+                                    {% if request.user.profile_picture %}
+                                        <img class="nav-avatar" src="{{ request.user.profile_picture.url }}" alt="{{ request.user.first_name|default:request.user.email }} avatar">
+                                    {% else %}
+                                        <img class="nav-avatar" src="{% static 'images/wbm-logo-purple.png' %}" alt="WBM Zion SHS avatar fallback">
+                                    {% endif %}
+                                    <span>Hi, {{ request.user.first_name|default:request.user.email }}</span>
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <form action="{% url 'logout' %}" method="post" class="nav-form">
                                     {% csrf_token %}

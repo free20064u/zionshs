@@ -3,7 +3,22 @@ from django.db import models
 
 
 class Responsibility(models.Model):
-    title = models.CharField(max_length=120, unique=True)
+    class ResponsibilityTitle(models.TextChoices):
+        HEADTEACHER = 'Headteacher', 'Headteacher'
+        HEADTEACHER_ACADEMICS = 'Headteacher Academics', 'Headteacher Academics'
+        HEADTEACHER_DOMESTIC = 'Headteacher Domestic', 'Headteacher Domestic'
+        HEADTEACHER_ADMINISTRATION = 'Headteacher Administration', 'Headteacher Administration'
+        DEAN_OF_DISCIPLINE = 'Dean of Discipline', 'Dean of Discipline'
+        HEAD_OF_DEPARTMENT = 'Head of Department', 'Head of Department'
+        SENIOR_HOUSE_TEACHER = 'Senior House Teacher', 'Senior House Teacher'
+        HOUSE_TEACHER = 'House Teacher', 'House Teacher'
+        FORM_TEACHER = 'Form Teacher', 'Form Teacher'
+
+    title = models.CharField(
+        max_length=120,
+        unique=True,
+        choices=ResponsibilityTitle.choices,
+    )
     description = models.TextField(blank=True)
 
     class Meta:
@@ -19,7 +34,7 @@ class Teacher(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='teacher_profile',
-        limit_choices_to={'is_teacher': True},
+        limit_choices_to={'role': 'Teacher'},
     )
     staff_id = models.CharField(max_length=30, unique=True)
     department = models.CharField(max_length=100)
@@ -38,7 +53,7 @@ class Teacher(models.Model):
         return f'{self.staff_id} - {full_name}'
 
     def save(self, *args, **kwargs):
-        if not self.user.is_teacher:
-            self.user.is_teacher = True
-            self.user.save(update_fields=['is_teacher'])
+        if self.user.role != 'Teacher':
+            self.user.role = 'Teacher'
+            self.user.save(update_fields=['role', 'is_student', 'is_teacher'])
         super().save(*args, **kwargs)

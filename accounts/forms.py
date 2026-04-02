@@ -18,7 +18,7 @@ class CustomUserCreationForm(StyledFormMixin, forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = ('first_name', 'last_name', 'email')
+        fields = ('first_name', 'last_name', 'email', 'gender', 'profile_picture')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -44,7 +44,17 @@ class CustomUserChangeForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'first_name', 'last_name', 'is_student', 'is_teacher', 'password', 'is_active', 'is_staff')
+        fields = (
+            'email',
+            'first_name',
+            'last_name',
+            'gender',
+            'profile_picture',
+            'role',
+            'password',
+            'is_active',
+            'is_staff',
+        )
 
 
 class RegisterForm(CustomUserCreationForm):

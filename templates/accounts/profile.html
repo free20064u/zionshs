@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}My Profile | WBM Zion SHS{% endblock %}
+
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <span class="eyebrow">My Profile</span>
+        <h1>Your account details at a glance.</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="profile-shell">
+            <div class="info-card profile-card">
+                <div class="profile-header">
+                    {% if request.user.profile_picture %}
+                        <img class="profile-avatar" src="{{ request.user.profile_picture.url }}" alt="{{ request.user.first_name|default:request.user.email }} profile picture">
+                    {% else %}
+                        <img class="profile-avatar" src="{% static 'images/wbm-logo-purple.png' %}" alt="WBM Zion SHS avatar fallback">
+                    {% endif %}
+                    <div>
+                        <h2>{{ request.user.first_name }} {{ request.user.last_name }}</h2>
+                        <p class="profile-subtitle">{{ request.user.email }}</p>
+                    </div>
+                </div>
+
+                <div class="profile-grid">
+                    <div class="profile-item">
+                        <span class="profile-label">Gender</span>
+                        <strong>{{ request.user.gender|default:'Not specified' }}</strong>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Role</span>
+                        <strong>{{ request.user.role|default:'No role assigned' }}</strong>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Student</span>
+                        <strong>{% if request.user.is_student %}Yes{% else %}No{% endif %}</strong>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Teacher</span>
+                        <strong>{% if request.user.is_teacher %}Yes{% else %}No{% endif %}</strong>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Joined</span>
+                        <strong>{{ request.user.date_joined|date:'F j, Y' }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
