@@ -130,5 +130,5 @@ class Student(models.Model):
     def save(self, *args, **kwargs):
         if self.user.role != 'Student':
             self.user.role = 'Student'
-            self.user.save(update_fields=['role', 'is_student', 'is_teacher'])
+            self.user.save(update_fields=['role'])
         super().save(*args, **kwargs)

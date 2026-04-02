@@ -43,8 +43,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     gender = models.CharField(max_length=10, choices=Gender.choices, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     role = models.CharField(max_length=20, choices=Role.choices, blank=True)
-    is_student = models.BooleanField(default=False)
-    is_teacher = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(auto_now_add=True)
@@ -59,8 +57,3 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
-
-    def save(self, *args, **kwargs):
-        self.is_student = self.role == self.Role.STUDENT
-        self.is_teacher = self.role == self.Role.TEACHER
-        super().save(*args, **kwargs)

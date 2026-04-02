@@ -38,14 +38,6 @@
                         <strong>{{ request.user.role|default:'No role assigned' }}</strong>
                     </div>
                     <div class="profile-item">
-                        <span class="profile-label">Student</span>
-                        <strong>{% if request.user.is_student %}Yes{% else %}No{% endif %}</strong>
-                    </div>
-                    <div class="profile-item">
-                        <span class="profile-label">Teacher</span>
-                        <strong>{% if request.user.is_teacher %}Yes{% else %}No{% endif %}</strong>
-                    </div>
-                    <div class="profile-item">
                         <span class="profile-label">Joined</span>
                         <strong>{{ request.user.date_joined|date:'F j, Y' }}</strong>
                     </div>

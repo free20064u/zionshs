@@ -5,14 +5,12 @@ from django.db import models
 class Responsibility(models.Model):
     class ResponsibilityTitle(models.TextChoices):
         HEADTEACHER = 'Headteacher', 'Headteacher'
-        HEADTEACHER_ACADEMICS = 'Headteacher Academics', 'Headteacher Academics'
-        HEADTEACHER_DOMESTIC = 'Headteacher Domestic', 'Headteacher Domestic'
-        HEADTEACHER_ADMINISTRATION = 'Headteacher Administration', 'Headteacher Administration'
-        DEAN_OF_DISCIPLINE = 'Dean of Discipline', 'Dean of Discipline'
+        ASSISTANT_HEADTEACHER_ACADEMIC = 'Assistant Headteacher Academic', 'Assistant Headteacher Academic'
+        ASSISTANT_HEADTEACHER_DOMESTIC = 'Assistant Headteacher Domestic', 'Assistant Headteacher Domestic'
+        ASSISTANT_HEADTEACHER_ADMINISTRATION = 'Assistant Headteacher Administration', 'Assistant Headteacher Administration'
         HEAD_OF_DEPARTMENT = 'Head of Department', 'Head of Department'
         SENIOR_HOUSE_TEACHER = 'Senior House Teacher', 'Senior House Teacher'
         HOUSE_TEACHER = 'House Teacher', 'House Teacher'
-        FORM_TEACHER = 'Form Teacher', 'Form Teacher'
 
     title = models.CharField(
         max_length=120,
@@ -55,5 +53,5 @@ class Teacher(models.Model):
     def save(self, *args, **kwargs):
         if self.user.role != 'Teacher':
             self.user.role = 'Teacher'
-            self.user.save(update_fields=['role', 'is_student', 'is_teacher'])
+            self.user.save(update_fields=['role'])
         super().save(*args, **kwargs)
