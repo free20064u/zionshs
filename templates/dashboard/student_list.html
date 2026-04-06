@@ -93,27 +93,17 @@
 
             <div class="manager-list-footer">
                 {% if students.has_other_pages %}
-                    <nav aria-label="Page navigation" class="mb-4">
-                        <ul class="pagination pagination-sm justify-content-center">
-                            {% if students.has_previous %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page=1&q={{ q|default:'' }}&programme={{ programme|default:'' }}&house={{ house_id|default:'' }}&assignment={{ assignment|default:'' }}">First</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ students.previous_page_number }}&q={{ q|default:'' }}&programme={{ programme|default:'' }}&house={{ house_id|default:'' }}&assignment={{ assignment|default:'' }}">Previous</a>
-                                </li>
-                            {% endif %}
-                            <li class="page-item active"><span class="page-link">{{ students.number }}</span></li>
-                            {% if students.has_next %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ students.next_page_number }}&q={{ q|default:'' }}&programme={{ programme|default:'' }}&house={{ house_id|default:'' }}&assignment={{ assignment|default:'' }}">Next</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ students.paginator.num_pages }}&q={{ q|default:'' }}&programme={{ programme|default:'' }}&house={{ house_id|default:'' }}&assignment={{ assignment|default:'' }}">Last</a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </nav>
+                    <div class="manager-pagination">
+                        {% if students.has_previous %}
+                            <a class="manager-pagination-link" href="?page=1&q={{ q|default:'' }}&programme={{ programme|default:'' }}&house={{ house_id|default:'' }}&assignment={{ assignment|default:'' }}">First</a>
+                            <a class="manager-pagination-link" href="?page={{ students.previous_page_number }}&q={{ q|default:'' }}&programme={{ programme|default:'' }}&house={{ house_id|default:'' }}&assignment={{ assignment|default:'' }}">Previous</a>
+                        {% endif %}
+                        <span class="manager-pagination-current">{{ students.number }}</span>
+                        {% if students.has_next %}
+                            <a class="manager-pagination-link" href="?page={{ students.next_page_number }}&q={{ q|default:'' }}&programme={{ programme|default:'' }}&house={{ house_id|default:'' }}&assignment={{ assignment|default:'' }}">Next</a>
+                            <a class="manager-pagination-link" href="?page={{ students.paginator.num_pages }}&q={{ q|default:'' }}&programme={{ programme|default:'' }}&house={{ house_id|default:'' }}&assignment={{ assignment|default:'' }}">Last</a>
+                        {% endif %}
+                    </div>
                 {% endif %}
 
                 <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Back to Dashboard</a>

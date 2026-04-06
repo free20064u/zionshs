@@ -63,6 +63,19 @@
             </div>
 
             <div class="manager-list-footer">
+                {% if classes.has_other_pages %}
+                    <div class="manager-pagination">
+                        {% if classes.has_previous %}
+                            <a class="manager-pagination-link" href="?page=1{% if programme %}&programme={{ programme }}{% endif %}">First</a>
+                            <a class="manager-pagination-link" href="?page={{ classes.previous_page_number }}{% if programme %}&programme={{ programme }}{% endif %}">Previous</a>
+                        {% endif %}
+                        <span class="manager-pagination-current">{{ classes.number }}</span>
+                        {% if classes.has_next %}
+                            <a class="manager-pagination-link" href="?page={{ classes.next_page_number }}{% if programme %}&programme={{ programme }}{% endif %}">Next</a>
+                            <a class="manager-pagination-link" href="?page={{ classes.paginator.num_pages }}{% if programme %}&programme={{ programme }}{% endif %}">Last</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
                 <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Back to Dashboard</a>
             </div>
         </div>

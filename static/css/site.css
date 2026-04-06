@@ -1941,6 +1941,45 @@ body {
     border-top: 1px solid rgba(136, 36, 113, 0.08);
 }
 
+.manager-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.manager-pagination-link,
+.manager-pagination-current {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.4rem;
+    height: 2.4rem;
+    padding: 0 0.9rem;
+    border-radius: 999px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.manager-pagination-link {
+    color: #882471;
+    background: rgba(136, 36, 113, 0.08);
+    border: 1px solid rgba(136, 36, 113, 0.12);
+}
+
+.manager-pagination-link:hover {
+    color: #ffffff;
+    background: #882471;
+}
+
+.manager-pagination-current {
+    color: #ffffff;
+    background: linear-gradient(135deg, #882471, #2f8f5b);
+    border: 1px solid transparent;
+}
+
 @media (max-width: 991px) {
     .dashboard-v2 {
         grid-template-columns: 1fr;

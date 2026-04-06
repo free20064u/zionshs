@@ -56,21 +56,17 @@
 
             <div class="manager-list-footer">
                 {% if subjects.has_other_pages %}
-                    <nav aria-label="Page navigation" class="flex">
-                        <ul class="justify-content-center">
-                            {% if subjects.has_previous %}
-                                <li class="">
-                                    <a class="" href="?page={{ subjects.previous_page_number }}">Previous</a>
-                                </li>
-                            {% endif %}
-                            <li class="active"><span class="">{{ subjects.number }}</span></li>
-                            {% if subjects.has_next %}
-                                <li class="">
-                                    <a class="" href="?page={{ subjects.next_page_number }}">Next</a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </nav>
+                    <div class="manager-pagination">
+                        {% if subjects.has_previous %}
+                            <a class="manager-pagination-link" href="?page=1">First</a>
+                            <a class="manager-pagination-link" href="?page={{ subjects.previous_page_number }}">Previous</a>
+                        {% endif %}
+                        <span class="manager-pagination-current">{{ subjects.number }}</span>
+                        {% if subjects.has_next %}
+                            <a class="manager-pagination-link" href="?page={{ subjects.next_page_number }}">Next</a>
+                            <a class="manager-pagination-link" href="?page={{ subjects.paginator.num_pages }}">Last</a>
+                        {% endif %}
+                    </div>
                 {% endif %}
 
                 <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Back to Dashboard</a>

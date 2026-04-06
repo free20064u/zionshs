@@ -59,6 +59,19 @@
             </div>
 
             <div class="manager-list-footer">
+                {% if houses.has_other_pages %}
+                    <div class="manager-pagination">
+                        {% if houses.has_previous %}
+                            <a class="manager-pagination-link" href="?page=1">First</a>
+                            <a class="manager-pagination-link" href="?page={{ houses.previous_page_number }}">Previous</a>
+                        {% endif %}
+                        <span class="manager-pagination-current">{{ houses.number }}</span>
+                        {% if houses.has_next %}
+                            <a class="manager-pagination-link" href="?page={{ houses.next_page_number }}">Next</a>
+                            <a class="manager-pagination-link" href="?page={{ houses.paginator.num_pages }}">Last</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
                 <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Back to Dashboard</a>
             </div>
         </div>
