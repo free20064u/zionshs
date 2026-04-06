@@ -8,53 +8,62 @@
     <link rel="icon" type="image/png" href="{% static 'images/wbm-logo-white.png' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/site.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 </head>
 <body>
     {% include 'includes/fa-icons.html' %}
+
     <header class="site-header">
-        <nav class="navbar navbar-expand-lg">
+        <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container">
                 <a class="navbar-brand" href="{% url 'home' %}">
-                    <img class="brand-logo" src="{% static 'images/wbm-logo-purple.png' %}" alt="WBM Zion SHS logo">
-                    <span>
-                        <strong>WBM Zion SHS</strong>
-                        <small>Welhelmin Bishop Memorial Zion Senior High School</small>
-                    </span>
+                    <img src="{% static 'images/wbm-logo-purple.png' %}" alt="WBM Zion SHS Logo" class="brand-logo">
+                    <div class="brand-text">
+                        <span class="brand-name">WBM Zion SHS</span>
+                    </div>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#primaryNav" aria-controls="primaryNav" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="primaryNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'academics' %}">Academics</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'admissions' %}">Admissions</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'news' %}">News</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
-                        {% if request.user.is_authenticated %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
-                            <li class="nav-item">
-                                <a class="nav-link nav-user nav-user-profile" href="{% url 'profile' %}">
-                                    {% if request.user.profile_picture %}
-                                        <img class="nav-avatar" src="{{ request.user.profile_picture.url }}" alt="{{ request.user.first_name|default:request.user.email }} avatar">
-                                    {% else %}
-                                        <img class="nav-avatar" src="{% static 'images/wbm-logo-purple.png' %}" alt="WBM Zion SHS avatar fallback">
-                                    {% endif %}
-                                    <span>Hi, {{ request.user.first_name|default:request.user.email }}</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <form action="{% url 'logout' %}" method="post" class="nav-form">
-                                    {% csrf_token %}
-                                    <button type="submit" class="nav-link nav-link-cta nav-button">Logout</button>
-                                </form>
-                            </li>
-                        {% else %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
-                            <li class="nav-item"><a class="nav-link nav-link-cta" href="{% url 'register' %}">Register</a></li>
-                        {% endif %}
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'about' %}">About</a></li>
+                        <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'academics' %}active{% endif %}" href="{% url 'academics' %}">Academics</a></li>
+                        <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'admissions' %}active{% endif %}" href="{% url 'admissions' %}">Admissions</a></li>
+                        <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url 'contact' %}">Contact</a></li>
                     </ul>
+                    <div class="nav-actions">
+                        {% if user.is_authenticated %}
+                            <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                            <div class="dropdown nav-user-dropdown">
+                                <button class="nav-profile-trigger dropdown-toggle" id="userMenu" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-haspopup="true">
+                                    {% if user.profile_picture %}
+                                        <img src="{{ user.profile_picture.url }}" alt="{{ user.first_name }}" class="nav-avatar">
+                                    {% else %}
+                                        <img src="{% static 'images/wbm-logo-purple.png' %}" alt="Default Avatar" class="nav-avatar">
+                                    {% endif %}
+                                    <span class="nav-username d-none d-lg-inline ms-2">{{ user.first_name|default:user.email }}</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userMenu">
+                                    <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                                    <li><a class="dropdown-item" href="#">Notifications</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form action="{% url 'logout' %}" method="post" class="m-0">
+                                            {% csrf_token %}
+                                            <button type="submit" class="dropdown-item text-danger border-0 w-100 text-start">Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        {% else %}
+                            <div class="nav-auth-group">
+                                <a class="nav-link nav-muted" href="{% url 'login' %}">Login</a>
+                                <a class="btn-enroll nav-register-btn" href="{% url 'register' %}">Enroll Now</a>
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </nav>
@@ -71,47 +80,100 @@
         {% block content %}{% endblock %}
     </main>
 
+    
     <footer class="site-footer">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-md-5">
-                    <div class="footer-brand">
-                        <img class="footer-logo" src="{% static 'images/wbm-logo-white.png' %}" alt="WBM Zion SHS white logo">
-                        <div>
-                            <h3>WBM Zion SHS</h3>
-                            <p>Welhelmin Bishop Memorial Zion Senior High School, proudly nicknamed AMEZSS.</p>
-                        </div>
+        <div class="footer-cta">
+            <div class="container d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                <div>
+                    <p class="eyebrow text-white mb-2">Join the community</p>
+                    <h3 class="mb-0">Ready to experience WBM Zion SHS?</h3>
+                </div>
+                <div class="footer-cta-actions">
+                    <a class="btn btn-light" href="{% url 'contact' %}">Book a Visit</a>
+                    <a class="btn btn-outline-light" href="{% url 'admissions' %}">Start Admission</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="container footer-main">
+            <div class="footer-brand-block">
+                <div class="footer-brand">
+                    <img class="footer-logo" src="{% static 'images/wbm-logo-white.png' %}" alt="WBM Zion SHS white logo">
+                    <div>
+                        <h3 class="mt-3">WBM Zion SHS</h3>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <h4>Quick Links</h4>
+                
+                
+            </div>
+
+            <div class="footer-grid">
+                <div>
+                    <h4>Explore</h4>
                     <ul class="footer-links">
-                        <li><a href="{% url 'about' %}">About Us</a></li>
+                        <li><a href="{% url 'about' %}">About</a></li>
                         <li><a href="{% url 'academics' %}">Academics</a></li>
                         <li><a href="{% url 'admissions' %}">Admissions</a></li>
+                        <li><a href="{% url 'news' %}">News & Events</a></li>
                     </ul>
+                    <div class="footer-badges mt-3">
+                    <span class="footer-pill">
+                        <svg class="fa-icon" aria-hidden="true"><use href="#fa-shield-check"></use></svg>
+                        Accredited
+                    </span>
+                    <span class="footer-pill">
+                        <svg class="fa-icon" aria-hidden="true"><use href="#fa-graduation-cap"></use></svg>
+                        STEM Focused
+                    </span>
                 </div>
-                <div class="col-md-4">
-                    <h4>Visit Campus</h4>
-                    <p>AMEZSS is a future-focused school community committed to academic excellence, character, and confident leadership.</p>
+                </div>
+                <div>
+                    <h4>Connect</h4>
+                    <ul class="contact-list">
+                        <li>
+                            <svg class="fa-icon" aria-hidden="true"><use href="#fa-location-dot"></use></svg>
+                            Old Tafo Akyem, Ghana
+                        </li>
+                        <li>
+                            <svg class="fa-icon" aria-hidden="true"><use href="#fa-phone"></use></svg>
+                            +233 555 000 000
+                        </li>
+                        <li>
+                            <svg class="fa-icon" aria-hidden="true"><use href="#fa-envelope"></use></svg>
+                            hello@wbmzionshs.edu.gh
+                        </li>
+                    </ul>
                     <div class="social-links" aria-label="Social media links">
-                        <a class="social-link" href="#" aria-label="Facebook">
-                            <svg class="fa-icon" aria-hidden="true"><use href="#fa-facebook-f"></use></svg>
-                        </a>
-                        <a class="social-link" href="#" aria-label="Instagram">
-                            <svg class="fa-icon" aria-hidden="true"><use href="#fa-instagram"></use></svg>
-                        </a>
-                        <a class="social-link" href="#" aria-label="X">
-                            <svg class="fa-icon" aria-hidden="true"><use href="#fa-x-twitter"></use></svg>
-                        </a>
-                        <a class="social-link" href="#" aria-label="YouTube">
-                            <svg class="fa-icon" aria-hidden="true"><use href="#fa-youtube"></use></svg>
-                        </a>
+                    <a class="social-link" href="#" aria-label="Facebook"><svg class="fa-icon" aria-hidden="true"><use href="#fa-facebook-f"></use></svg></a>
+                    <a class="social-link" href="#" aria-label="Instagram"><svg class="fa-icon" aria-hidden="true"><use href="#fa-instagram"></use></svg></a>
+                    <a class="social-link" href="#" aria-label="X"><svg class="fa-icon" aria-hidden="true"><use href="#fa-x-twitter"></use></svg></a>
+                    <a class="social-link" href="#" aria-label="YouTube"><svg class="fa-icon" aria-hidden="true"><use href="#fa-youtube"></use></svg></a>
+                </div>
+                </div>
+                <div>
+                    <h4>Stay updated</h4>
+                    <p class="footer-note">Get campus highlights, admissions timelines, and event invites.</p>
+                    <div class="footer-form" role="form">
+                        <label class="visually-hidden" for="footerEmail">Email address</label>
+                        <input id="footerEmail" type="email" class="form-control" placeholder="you@example.com" aria-label="Email address">
+                        <button type="button" class="btn btn-primary w-100">Subscribe</button>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="footer-bottom">
+            <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <span class="small">&copy; {% now "Y" %} WBM Zion SHS. All rights reserved.</span>
+                <div class="footer-bottom-links">
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                    <a href="{% url 'contact' %}">Contact</a>
+                </div>
+            </div>
+        </div>
     </footer>
+
 
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 </body>

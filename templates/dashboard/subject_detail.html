@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Subject Detail | WBM Zion SHS{% endblock %}
+
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <span class="eyebrow">Dashboard Access</span>
+        <h1>{{ subject.name }}</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="info-card">
+            <h2 class="h4 mb-4">Subject Overview</h2>
+            <div class="profile-grid">
+                <div class="profile-item">
+                    <span class="profile-label">Subject Name</span>
+                    <div class="fw-bold">{{ subject.name }}</div>
+                </div>
+                <div class="profile-item">
+                    <span class="profile-label">Courses Linked</span>
+                    <div class="fw-bold">{{ subject.programmes.count }}</div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <h3 class="h5 mb-3">Linked Courses</h3>
+                <div class="dashboard-chip-list">
+                    {% for programme in subject.programmes.all %}
+                        <span class="dashboard-chip">{{ programme.title }}</span>
+                    {% empty %}
+                        <span class="text-muted">No courses linked to this subject.</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mt-4 border-top pt-4">
+                <a href="{% url 'subject_list' %}" class="btn btn-outline-secondary">Back to Subjects</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

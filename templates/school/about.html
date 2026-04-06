@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}About | Zion Heights School{% endblock %}
+{% block title %}About | WBM Zion Senior High School {% endblock %}
 
 {% block content %}
 <section class="page-banner">
@@ -15,7 +15,7 @@
         <div class="row g-5">
             <div class="col-lg-6">
                 <h2>Our mission</h2>
-                <p>Zion Heights School exists to nurture learners who think clearly, serve responsibly, and grow into capable leaders. Our approach combines academic depth with personal care and strong family partnership.</p>
+                <p>WBM Zion Senior High School exists to nurture learners who think clearly, serve responsibly, and grow into capable leaders. Our approach combines academic depth with personal care and strong family partnership.</p>
             </div>
             <div class="col-lg-6">
                 <div class="info-card">
@@ -40,6 +40,31 @@
         <div class="timeline">
             {% for milestone in milestones %}
                 <div class="timeline-item">{{ milestone }}</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-heading">
+            <span class="eyebrow">Campus</span>
+            <h2>Our Facilities</h2>
+            <p>We provide a modern environment equipped with the resources necessary for a complete and enriching educational experience.</p>
+        </div>
+        <div class="row g-4">
+            {% for facility in facilities %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="info-card h-100 p-0 overflow-hidden">
+                        {% if facility.image %}
+                            <img src="{{ facility.image.url }}" alt="{{ facility.name }}" class="w-100" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        <div class="p-4 d-flex align-items-center gap-3">
+                            <span class="feature-icon m-0"><svg class="fa-icon"><use href="#fa-check-circle"></use></svg></span>
+                            <span class="fw-bold">{{ facility.name }}</span>
+                        </div>
+                    </div>
+                </div>
             {% endfor %}
         </div>
     </div>

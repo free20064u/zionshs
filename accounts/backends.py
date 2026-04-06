@@ -7,14 +7,15 @@ UserModel = get_user_model()
 
 class EmailBackend(ModelBackend):
     def authenticate(self, request, email=None, password=None, **kwargs):
-        if email is None:
-            email = kwargs.get(UserModel.USERNAME_FIELD)
+        # Handle both 'email' and 'username' keys as standard Django forms
+        # often pass the identifier as 'username' regardless of the field name.
+        identifier = email or kwargs.get('email') or kwargs.get('username')
 
-        if email is None or password is None:
+        if identifier is None or password is None:
             return None
 
         try:
-            user = UserModel.objects.get(email__iexact=email)
+            user = UserModel.objects.get(email__iexact=identifier)
         except UserModel.DoesNotExist:
             return None
 

@@ -2,22 +2,7 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 
 from .forms import ContactForm
-
-
-PROGRAMMES = [
-    {
-        'title': 'Early Years',
-        'description': 'Play-based learning that develops language, confidence, and curiosity in a safe environment.',
-    },
-    {
-        'title': 'Primary School',
-        'description': 'Strong literacy, numeracy, science, and creative arts foundations supported by caring teachers.',
-    },
-    {
-        'title': 'Secondary School',
-        'description': 'Rigorous academics, leadership coaching, and career pathways that prepare students for university and beyond.',
-    },
-]
+from .models import Facility, NewsItem, Programme
 
 FEATURES = [
     {
@@ -41,39 +26,21 @@ STATS = [
     {'value': '12', 'label': 'Years of trusted service'},
 ]
 
-NEWS_ITEMS = [
-    {
-        'title': 'STEM Fair Showcases Student-Led Innovation',
-        'summary': 'Learners presented robotics, renewable energy, and engineering prototypes to parents and local partners.',
-        'date': 'March 18, 2026',
-    },
-    {
-        'title': 'Admissions Open for the 2026/2027 Session',
-        'summary': 'Families can now begin applications, book campus tours, and attend our open house sessions.',
-        'date': 'February 10, 2026',
-    },
-    {
-        'title': 'Inter-House Athletics Builds Team Spirit',
-        'summary': 'Students competed across track, football, and relay events with an emphasis on discipline and sportsmanship.',
-        'date': 'January 24, 2026',
-    },
-]
-
 ADMISSION_STEPS = [
-    'Complete the admission inquiry form or visit the school office.',
-    'Attend a campus tour and family information session.',
-    'Submit prior academic records and supporting documents.',
-    'Take the placement assessment and meet with admissions staff.',
-    'Receive an offer letter and complete enrollment.',
+    'Check your placement on the CSSPS portal (www.cssps.gov.gh) using your Index Number.',
+    'Print your Placement Form and the Enrolment Form from the portal.',
+    'Visit the school campus with your printed forms and BECE result slip for verification.',
+    'Complete the internal school registration forms and pick up the official prospectus.',
+    'Finalize enrollment by attending the orientation session and receiving house assignments.',
 ]
 
 
 def home(request):
     context = {
-        'programmes': PROGRAMMES,
+        'programmes': Programme.objects.all(),
         'features': FEATURES,
         'stats': STATS,
-        'news_items': NEWS_ITEMS[:2],
+        'news_items': NewsItem.objects.all()[:2], # Fetch latest 2 news items
     }
     return render(request, 'school/home.html', context)
 
@@ -90,17 +57,24 @@ def about(request):
             'Expanded into a full basic and secondary programme with modern learning spaces.',
             'Recognized for strong academic results and student development initiatives.',
         ],
+        'facilities': Facility.objects.all(),
     }
     return render(request, 'school/about.html', context)
 
 
 def academics(request):
     context = {
-        'programmes': PROGRAMMES,
+        'programmes': Programme.objects.prefetch_related('subjects').all(),
+        'core_subjects': [
+            'English Language',
+            'Core Mathematics',
+            'Integrated Science',
+            'Social Studies',
+        ],
         'highlights': [
-            'Small classes that allow for attentive teaching and targeted feedback.',
-            'Digital literacy, science practicals, and enrichment activities built into the timetable.',
-            'Continuous assessment paired with clear reporting for families.',
+            'WASSCE focused curriculum with intensive practical laboratory sessions.',
+            'ICT integrated learning across all elective departments.',
+            'Regular mock examinations and academic counseling for university placement.',
         ],
     }
     return render(request, 'school/academics.html', context)
@@ -108,19 +82,21 @@ def academics(request):
 
 def admissions(request):
     context = {
+        'programmes': Programme.objects.all(),
         'steps': ADMISSION_STEPS,
         'requirements': [
-            'Completed application form',
-            'Passport photograph',
-            'Birth certificate or valid identification',
-            'Previous school report cards',
+            'CSSPS Placement and Enrolment forms (Printed)',
+            'Original and photocopies of BECE Result Slip',
+            'Certified Birth Certificate or NHIS card',
+            'Six (6) recent passport-sized photographs',
+            'Completed medical report from a recognized facility',
         ],
     }
     return render(request, 'school/admissions.html', context)
 
 
 def news(request):
-    return render(request, 'school/news.html', {'news_items': NEWS_ITEMS})
+    return render(request, 'school/news.html', {'news_items': NewsItem.objects.all()}) # Fetch all news items
 
 
 def contact(request):

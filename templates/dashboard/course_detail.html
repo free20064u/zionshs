@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Course Detail | WBM Zion SHS{% endblock %}
+
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <span class="eyebrow">Dashboard Access</span>
+        <h1>{{ course.title }}</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="info-card">
+            <h2 class="h4 mb-4">Course Overview</h2>
+            <div class="profile-grid">
+                <div class="profile-item">
+                    <span class="profile-label">Course Title</span>
+                    <div class="fw-bold">{{ course.title }}</div>
+                </div>
+                <div class="profile-item">
+                    <span class="profile-label">Display Order</span>
+                    <div class="fw-bold">{{ course.order }}</div>
+                </div>
+                <div class="profile-item">
+                    <span class="profile-label">Subjects</span>
+                    <div class="fw-bold">{{ course.subjects.count }}</div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <h3 class="h5 mb-3">Description</h3>
+                <p>{{ course.description }}</p>
+            </div>
+
+            <div class="mt-4">
+                <h3 class="h5 mb-3">Subjects in this Course</h3>
+                <div class="dashboard-chip-list">
+                    {% for subject in course.subjects.all %}
+                        <a href="{% url 'subject_detail' subject.pk %}" class="dashboard-chip text-decoration-none">{{ subject.name }}</a>
+                    {% empty %}
+                        <span class="text-muted">No subjects linked to this course.</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mt-4 border-top pt-4">
+                <a href="{% url 'course_list' %}" class="btn btn-outline-secondary">Back to Courses</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

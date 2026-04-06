@@ -1,23 +1,44 @@
 {% extends 'base.html' %}
 
-{% block title %}Academics | Zion Heights School{% endblock %}
+{% block title %}Academics | WBM Zion Senior High School{% endblock %}
 
 {% block content %}
 <section class="page-banner">
     <div class="container">
         <span class="eyebrow">Academics</span>
-        <h1>A balanced curriculum that prepares students for life and leadership.</h1>
+        <h1>A comprehensive SHS curriculum preparing students for WASSCE and beyond.</h1>
     </div>
 </section>
 
 <section class="section">
     <div class="container">
+        <div class="section-heading mb-5">
+            <span class="eyebrow">Core Curriculum</span>
+            <h2>Compulsory Subjects</h2>
+            <p>Every student at WBM Zion SHS takes the following core subjects regardless of their chosen elective program.</p>
+            <div class="d-flex flex-wrap gap-3 mt-4">
+                {% for subject in core_subjects %}
+                    <span class="badge bg-primary fs-6 p-3">{{ subject }}</span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="section-heading">
+            <span class="eyebrow">Elective Programs</span>
+            <h2>Courses Offered</h2>
+        </div>
         <div class="row g-4">
             {% for programme in programmes %}
-                <div class="col-md-4">
+                <div class="col-md-6 col-lg-4">
                     <article class="info-card h-100">
-                        <h2>{{ programme.title }}</h2>
+                        <h3 class="h4 border-bottom pb-2 mb-3">{{ programme.title }}</h3>
                         <p>{{ programme.description }}</p>
+                        <h4 class="h6 fw-bold mt-3">Elective Subjects:</h4>
+                        <ul class="list-unstyled">
+                            {% for subject in programme.subjects.all %}
+                                <li class="small"><svg class="fa-icon me-2 text-primary" style="width: 12px; height: 12px;"><use href="#fa-check-circle"></use></svg>{{ subject.name }}</li>
+                            {% endfor %}
+                        </ul>
                     </article>
                 </div>
             {% endfor %}

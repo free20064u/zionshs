@@ -2,224 +2,105 @@
 
 {% load static %}
 
-{% block title %}Dashboard | WBM Zion SHS{% endblock %}
+{% block title %}Dashboard | WBM Zion Senior High School{% endblock %}
 
 {% block content %}
-<section class="page-banner">
+<section class="page-banner dashboard-banner">
     <div class="container">
         <span class="eyebrow">Dashboard</span>
-        <h1>Welcome back, {{ request.user.first_name|default:request.user.email }}.</h1>
+        <h1>Statistics Overview</h1>
     </div>
 </section>
 
 <section class="section">
     <div class="container">
-        <div class="dashboard-shell">
-            <div class="dashboard-main">
-                <div class="info-card dashboard-summary-card">
-                    <div class="dashboard-header-row">
-                        <div class="dashboard-user">
-                            {% if request.user.profile_picture %}
-                                <img class="profile-avatar" src="{{ request.user.profile_picture.url }}" alt="{{ request.user.first_name|default:request.user.email }} profile picture">
-                            {% else %}
-                                <img class="profile-avatar" src="{% static 'images/wbm-logo-purple.png' %}" alt="WBM Zion SHS avatar fallback">
-                            {% endif %}
-                            <div>
-                                <h2>{{ request.user.first_name }} {{ request.user.last_name }}</h2>
-                                <p class="profile-subtitle">{{ request.user.email }}</p>
-                            </div>
-                        </div>
-                        <span class="dashboard-role-badge">{{ request.user.role|default:'No role assigned' }}</span>
-                    </div>
-
-                    <div class="dashboard-highlight-grid">
-                        {% for item in role_highlights %}
-                            <div class="dashboard-highlight-item">
-                                <svg class="fa-icon" aria-hidden="true"><use href="#fa-star"></use></svg>
-                                <span>{{ item }}</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                {% if dashboard_kind == 'student' %}
-                    <div class="info-card dashboard-role-card">
-                        <div class="dashboard-card-heading">
-                            <span class="programme-icon"><svg class="fa-icon" aria-hidden="true"><use href="#fa-graduation-cap"></use></svg></span>
-                            <div>
-                                <h3>Student Dashboard</h3>
-                                <p>Your academic placement and school profile.</p>
-                            </div>
-                        </div>
-                        <div class="dashboard-grid">
-                            <div class="dashboard-data-card">
-                                <span class="dashboard-label">Admission Number</span>
-                                <strong>{{ student_profile.admission_number }}</strong>
-                            </div>
-                            <div class="dashboard-data-card">
-                                <span class="dashboard-label">Programme</span>
-                                <strong>{{ student_profile.programme }}</strong>
-                            </div>
-                            <div class="dashboard-data-card">
-                                <span class="dashboard-label">Class</span>
-                                <strong>{{ student_profile.current_class|default:'Not assigned' }}</strong>
-                            </div>
-                            <div class="dashboard-data-card">
-                                <span class="dashboard-label">House</span>
-                                <strong>{% if student_profile.house %}{{ student_profile.house.name }}{% else %}Not assigned{% endif %}</strong>
-                            </div>
-                            <div class="dashboard-data-card">
-                                <span class="dashboard-label">Guardian</span>
-                                <strong>{{ student_profile.guardian_name|default:'Not provided' }}</strong>
-                            </div>
-                            <div class="dashboard-data-card">
-                                <span class="dashboard-label">Date Admitted</span>
-                                <strong>{% if student_profile.date_admitted %}{{ student_profile.date_admitted|date:'F j, Y' }}{% else %}Not provided{% endif %}</strong>
-                            </div>
+        <div class="dashboard-showcase">
+            {% if dashboard_kind == 'student' %}
+                <section class="dashboard-panel-modern">
+                    <div class="dashboard-panel-header">
+                        <div>
+                            <span class="dashboard-section-tag">Student Statistics</span>
+                            <h2 class="h4 mb-1">My Statistics</h2>
                         </div>
                     </div>
-                {% elif dashboard_kind == 'teacher' %}
-                    <div class="info-card dashboard-role-card">
-                        <div class="dashboard-card-heading">
-                            <span class="programme-icon"><svg class="fa-icon" aria-hidden="true"><use href="#fa-book-open"></use></svg></span>
-                            <div>
-                                <h3>Teacher Dashboard</h3>
-                                <p>Your staff profile, department, and assigned school responsibilities.</p>
+                    <div class="dashboard-metric-grid">
+                        <div class="dashboard-metric-card">
+                            <div class="dashboard-metric-icon">
+                                <svg class="fa-icon" style="width:22px; height:22px;"><use href="#fa-graduation-cap"></use></svg>
                             </div>
+                            <div class="dashboard-metric-value">{{ student_profile.programme|default:'Pending' }}</div>
+                            <div class="dashboard-metric-label">Programme</div>
                         </div>
-                        <div class="dashboard-grid">
-                            <div class="dashboard-data-card">
-                                <span class="dashboard-label">Staff ID</span>
-                                <strong>{{ teacher_profile.staff_id }}</strong>
+                        <div class="dashboard-metric-card">
+                            <div class="dashboard-metric-icon">
+                                <svg class="fa-icon" style="width:22px; height:22px;"><use href="#fa-book-open"></use></svg>
                             </div>
-                            <div class="dashboard-data-card">
-                                <span class="dashboard-label">Department</span>
-                                <strong>{{ teacher_profile.department }}</strong>
-                            </div>
-                            <div class="dashboard-data-card">
-                                <span class="dashboard-label">Subject Specialty</span>
-                                <strong>{{ teacher_profile.subject_specialty|default:'Not assigned' }}</strong>
-                            </div>
-                            <div class="dashboard-data-card">
-                                <span class="dashboard-label">Date Hired</span>
-                                <strong>{% if teacher_profile.date_hired %}{{ teacher_profile.date_hired|date:'F j, Y' }}{% else %}Not provided{% endif %}</strong>
-                            </div>
-                            <div class="dashboard-data-card">
-                                <span class="dashboard-label">Phone Number</span>
-                                <strong>{{ teacher_profile.phone_number|default:'Not provided' }}</strong>
-                            </div>
-                            <div class="dashboard-data-card">
-                                <span class="dashboard-label">Responsibilities</span>
-                                <strong>{{ responsibilities|length }}</strong>
-                            </div>
+                            <div class="dashboard-metric-value">{{ student_profile.school_class|default:'Pending' }}</div>
+                            <div class="dashboard-metric-label">Current Class</div>
                         </div>
+                        <div class="dashboard-metric-card">
+                            <div class="dashboard-metric-icon">
+                                <svg class="fa-icon" style="width:22px; height:22px;"><use href="#fa-users"></use></svg>
+                            </div>
+                            <div class="dashboard-metric-value">{{ student_profile.admission_number|default:'N/A' }}</div>
+                            <div class="dashboard-metric-label">Admission Number</div>
+                        </div>
+                        <div class="dashboard-metric-card">
+                            <div class="dashboard-metric-icon">
+                                <svg class="fa-icon" style="width:22px; height:22px;"><use href="#fa-trophy"></use></svg>
+                            </div>
+                            <div class="dashboard-metric-value">{% if student_profile.house %}{{ student_profile.house.name }}{% else %}N/A{% endif %}</div>
+                            <div class="dashboard-metric-label">House</div>
+                        </div>
+                    </div>
+                </section>
+            {% endif %}
 
-                        <div class="dashboard-responsibility-block">
-                            <h4>Assigned Responsibilities</h4>
-                            {% if responsibilities %}
-                                <div class="dashboard-chip-list">
-                                    {% for responsibility in responsibilities %}
-                                        <span class="dashboard-chip">{{ responsibility.title }}</span>
-                                    {% endfor %}
+            {% if responsibility_panels %}
+                <div class="dashboard-panel-stack">
+                    {% for panel in responsibility_panels %}
+                        <section class="dashboard-panel-modern">
+                            <div class="dashboard-panel-header">
+                                <div>
+                                    <span class="dashboard-section-tag">Responsibility Statistics</span>
+                                    <h2 class="h4 mb-1">{{ panel.title }}</h2>
                                 </div>
-                            {% else %}
-                                <p class="dashboard-muted">No responsibilities assigned yet.</p>
-                            {% endif %}
-                        </div>
-
-                        {% if responsibility_panels %}
-                            <div class="dashboard-responsibility-panels">
-                                {% for panel in responsibility_panels %}
-                                    <div class="dashboard-panel-card">
-                                        <h4>{{ panel.title }}</h4>
-                                        <p class="dashboard-muted">{{ panel.summary }}</p>
-                                        <ul class="icon-list dashboard-list">
-                                            {% for item in panel.items %}
-                                                <li>{{ item }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
+                            </div>
+                            <div class="dashboard-metric-grid">
+                                {% for stat in panel.stats %}
+                                    <{% if stat.url %}a href="{{ stat.url }}"{% else %}div{% endif %} class="dashboard-metric-card text-decoration-none">
+                                        <div class="dashboard-metric-icon">
+                                            <svg class="fa-icon" style="width:22px; height:22px;"><use href="#{{ stat.icon|default:'fa-star' }}"></use></svg>
+                                        </div>
+                                        <div class="dashboard-metric-value">{{ stat.value }}</div>
+                                        <div class="dashboard-metric-label">{{ stat.label }}</div>
+                                    </{% if stat.url %}a{% else %}div{% endif %}>
                                 {% endfor %}
                             </div>
-                        {% endif %}
-                    </div>
-                {% else %}
-                    <div class="info-card dashboard-role-card">
-                        <div class="dashboard-card-heading">
-                            <span class="programme-icon"><svg class="fa-icon" aria-hidden="true"><use href="#fa-users"></use></svg></span>
-                            <div>
-                                <h3>Account Pending Assignment</h3>
-                                <p>Your login is active, but school administration has not assigned you a formal platform role yet.</p>
-                            </div>
-                        </div>
-                        <div class="dashboard-grid">
-                            <div class="dashboard-data-card">
-                                <span class="dashboard-label">Current Role</span>
-                                <strong>No role assigned</strong>
-                            </div>
-                            <div class="dashboard-data-card">
-                                <span class="dashboard-label">Next Step</span>
-                                <strong>Contact administration</strong>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
+                        </section>
+                    {% endfor %}
+                </div>
+            {% endif %}
 
-            <aside class="dashboard-side">
-                <div class="info-card dashboard-panel">
-                    <h3>Quick Actions</h3>
-                    <div class="dashboard-action-list">
-                        <a class="dashboard-action-link" href="{% url 'profile' %}">
-                            <svg class="fa-icon" aria-hidden="true"><use href="#fa-users"></use></svg>
-                            <span>View Profile</span>
-                        </a>
-                        <a class="dashboard-action-link" href="{% url 'contact' %}">
-                            <svg class="fa-icon" aria-hidden="true"><use href="#fa-envelope"></use></svg>
-                            <span>Contact School</span>
-                        </a>
-                        {% if request.user.is_staff %}
-                            <a class="dashboard-action-link" href="/admin/">
-                                <svg class="fa-icon" aria-hidden="true"><use href="#fa-trophy"></use></svg>
-                                <span>Open Admin</span>
-                            </a>
-                        {% endif %}
+            <section class="dashboard-panel-modern">
+                <div class="dashboard-panel-header">
+                    <div>
+                        <span class="dashboard-section-tag">School Statistics</span>
+                        <h2 class="h4 mb-1">School-wide Overview</h2>
                     </div>
                 </div>
-
-                {% if dashboard_kind == 'teacher' and responsibilities %}
-                    <div class="info-card dashboard-panel">
-                        <h3>Leadership Overview</h3>
-                        <p class="dashboard-muted">This account currently carries the following leadership or pastoral assignments.</p>
-                        <ul class="icon-list">
-                            {% for title in responsibility_titles %}
-                                <li>{{ title }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    {% if responsibility_panels %}
-                        <div class="info-card dashboard-panel">
-                            <h3>Responsibility Focus</h3>
-                            <p class="dashboard-muted">Your active assignments shape the leadership tools and information that appear here.</p>
-                            <div class="dashboard-chip-list">
-                                {% for panel in responsibility_panels %}
-                                    <span class="dashboard-chip">{{ panel.title }}</span>
-                                {% endfor %}
+                <div class="dashboard-metric-grid">
+                    {% for stat in display_school_stats %}
+                        <{% if stat.url %}a href="{{ stat.url }}"{% else %}div{% endif %} class="dashboard-metric-card dashboard-metric-card-school text-decoration-none">
+                            <div class="dashboard-metric-icon">
+                                <svg class="fa-icon" style="width:22px; height:22px;"><use href="#{{ stat.icon }}"></use></svg>
                             </div>
-                        </div>
-                    {% endif %}
-                {% elif dashboard_kind == 'student' %}
-                    <div class="info-card dashboard-panel">
-                        <h3>Student Snapshot</h3>
-                        <p class="dashboard-muted">Your dashboard will grow with academic records, notices, fees, attendance, and results as the platform expands.</p>
-                    </div>
-                {% else %}
-                    <div class="info-card dashboard-panel">
-                        <h3>Need Help?</h3>
-                        <p class="dashboard-muted">If your role should already be active, please contact the school office so your access can be completed.</p>
-                    </div>
-                {% endif %}
-            </aside>
+                            <div class="dashboard-metric-value">{{ stat.value }}</div>
+                            <div class="dashboard-metric-label">{{ stat.label }}</div>
+                        </{% if stat.url %}a{% else %}div{% endif %}>
+                    {% endfor %}
+                </div>
+            </section>
         </div>
     </div>
 </section>

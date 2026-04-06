@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ teacher.user.get_full_name }} | Teacher Details | WBM Zion SHS{% endblock %}
+
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <span class="eyebrow">Staff Management</span>
+        <h1>{{ teacher.user.get_full_name }}</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="info-card">
+            <div class="row g-4">
+                <div class="col-md-4 text-center">
+                    <div class="profile-avatar-shell mb-3 mx-auto">
+                        {% if teacher.user.profile_picture %}
+                            <img src="{{ teacher.user.profile_picture.url }}" alt="{{ teacher.user.first_name }}" class="w-100 rounded shadow-sm">
+                        {% else %}
+                            <img src="{% static 'images/wbm-logo-purple.png' %}" alt="WBM Zion SHS" class="w-100 rounded shadow-sm">
+                        {% endif %}
+                    </div>
+                    <span class="badge bg-success fs-6 w-100 p-2">Staff ID: {{ teacher.staff_id }}</span>
+                </div>
+                <div class="col-md-8">
+                    <h3>Professional Profile</h3>
+                    <ul class="list-group list-group-flush mb-4">
+                        <li class="list-group-item d-flex justify-content-between"><span>Department:</span> <strong>{{ teacher.department }}</strong></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>Specialty:</span> <strong>{{ teacher.subject_specialty }}</strong></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>Phone Number:</span> <strong>{{ teacher.phone_number }}</strong></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>Email Address:</span> <strong>{{ teacher.user.email }}</strong></li>
+                    </ul>
+                    
+                    <h3>Management Roles</h3>
+                    <div class="dashboard-chip-list">
+                        {% for responsibility in teacher.responsibilities.all %}
+                            <span class="dashboard-chip">{{ responsibility.title }}</span>
+                        {% empty %}
+                            <span class="text-muted">No specific administrative responsibilities.</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-primary mt-4">Back to Dashboard</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

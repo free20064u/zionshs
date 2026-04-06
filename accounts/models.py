@@ -36,13 +36,20 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     class Role(models.TextChoices):
         STUDENT = 'Student', 'Student'
         TEACHER = 'Teacher', 'Teacher'
+        HEADTEACHER = 'Headteacher', 'Headteacher'
+        AH_ACADEMIC = 'Assistant Headteacher Academic', 'Assistant Headteacher Academic'
+        AH_DOMESTIC = 'Assistant Headteacher Domestic', 'Assistant Headteacher Domestic'
+        AH_ADMIN = 'Assistant Headteacher Administration', 'Assistant Headteacher Administration'
+        HOD = 'Head of Department', 'Head of Department'
+        SENIOR_HOUSE_TEACHER = 'Senior House Teacher', 'Senior House Teacher'
+        HOUSE_TEACHER = 'House Teacher', 'House Teacher'
 
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
     gender = models.CharField(max_length=10, choices=Gender.choices, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
-    role = models.CharField(max_length=20, choices=Role.choices, blank=True)
+    role = models.CharField(max_length=50, choices=Role.choices, blank=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(auto_now_add=True)
@@ -57,3 +64,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+    def get_full_name(self):
+        """Returns the first_name plus the last_name, with a space in between."""
+        return f"{self.first_name} {self.last_name}".strip()
+
+    def get_short_name(self):
+        """Returns the short name for the user."""
+        return self.first_name

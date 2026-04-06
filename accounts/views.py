@@ -1,53 +1,31 @@
-from django.contrib import messages
-from django.contrib.auth import login, logout
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from .forms import RegisterForm
 
-from .forms import EmailAuthenticationForm, RegisterForm
+@login_required
+def profile(request):
+    """Displays the user's personal information profile page."""
+    user = request.user
+    context = {
+        # Safely fetch profiles if they exist
+        'student_profile': getattr(user, 'student_profile', None),
+        'teacher_profile': getattr(user, 'teacher_profile', None),
+        'profile_highlights': [
+            'Keep your contact information up to date to receive school notices.',
+            'Role-specific details are managed by the school administration.',
+            'Your data is secured and only accessible to authorized staff.',
+        ]
+    }
+    return render(request, 'accounts/profile.html', context)
 
 
-def register_view(request):
-    if request.user.is_authenticated:
-        return redirect('home')
-
+def register(request):
+    """Handles new user registration."""
     if request.method == 'POST':
         form = RegisterForm(request.POST, request.FILES)
         if form.is_valid():
-            user = form.save()
-            login(request, user, backend='accounts.backends.EmailBackend')
-            messages.success(request, 'Your account has been created and you are now signed in.')
-            return redirect('home')
+            form.save()
+            return redirect('login')
     else:
         form = RegisterForm()
-
     return render(request, 'accounts/register.html', {'form': form})
-
-
-def login_view(request):
-    if request.user.is_authenticated:
-        return redirect('home')
-
-    if request.method == 'POST':
-        form = EmailAuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            login(request, form.get_user())
-            messages.success(request, 'Welcome back. You have signed in successfully.')
-            return redirect('home')
-    else:
-        form = EmailAuthenticationForm(request)
-
-    return render(request, 'accounts/login.html', {'form': form})
-
-
-def logout_view(request):
-    if request.method == 'POST':
-        logout(request)
-        messages.success(request, 'You have been signed out successfully.')
-        return redirect('home')
-
-    return render(request, 'accounts/logout.html')
-
-
-@login_required
-def profile_view(request):
-    return render(request, 'accounts/profile.html')

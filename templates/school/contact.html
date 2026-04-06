@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Contact | Zion Heights School{% endblock %}
+{% block title %}Contact |  WBM Zion Senior High School {% endblock %}
 
 {% block content %}
 <section class="page-banner">
@@ -14,34 +14,52 @@
     <div class="container">
         <div class="row g-5">
             <div class="col-lg-7">
-                <div class="info-card">
-                    <h2>Send an enquiry</h2>
-                    <form method="post" novalidate>
+                <div class="info-card contact-form-card">
+                    <div class="section-heading mb-4">
+                        <span class="eyebrow text-primary">Admissions Support</span>
+                        <h2>Send an enquiry</h2>
+                        <p class="dashboard-muted">Share a few details and our admissions team will respond with the right next steps.</p>
+                    </div>
+
+                    <form method="post" novalidate class="modern-form">
                         {% csrf_token %}
                         <div class="row g-3">
                             {% for field in form %}
                                 <div class="col-12">
-                                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                    {{ field }}
-                                    {% if field.errors %}
-                                        <div class="text-danger small">{{ field.errors|striptags }}</div>
-                                    {% endif %}
+                                    <div class="form-field-group">
+                                        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                        {{ field }}
+                                        {% if field.help_text %}
+                                            <div class="form-help">{{ field.help_text|safe }}</div>
+                                        {% endif %}
+                                        {% if field.errors %}
+                                            <div class="form-feedback form-feedback-error">{{ field.errors|striptags }}</div>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             {% endfor %}
                         </div>
-                        <button class="btn btn-primary mt-4" type="submit">Submit Enquiry</button>
+                        <button class="btn btn-primary btn-modern mt-4" type="submit">Submit enquiry</button>
                     </form>
                 </div>
             </div>
+
             <div class="col-lg-5">
-                <div class="info-card">
-                    <h3>Contact details</h3>
+                <div class="info-card contact-details-card">
+                    <span class="dashboard-section-tag">Contact Details</span>
+                    <h3>Speak with the school</h3>
+                    <p class="dashboard-muted">We are available for visits, admissions guidance, and general school enquiries throughout the week.</p>
                     <ul class="contact-list">
                         <li><strong>Address:</strong> {{ contact_details.address }}</li>
                         <li><strong>Phone:</strong> {{ contact_details.phone }}</li>
                         <li><strong>Email:</strong> {{ contact_details.email }}</li>
                         <li><strong>Office Hours:</strong> {{ contact_details.hours }}</li>
                     </ul>
+                    <div class="dashboard-chip-list mt-4">
+                        <span class="dashboard-chip">Fast response</span>
+                        <span class="dashboard-chip">Friendly support</span>
+                        <span class="dashboard-chip">Visit planning</span>
+                    </div>
                 </div>
             </div>
         </div>

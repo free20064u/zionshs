@@ -1,4 +1,5 @@
 from django import forms
+from .models import Programme
 
 
 class ContactForm(forms.Form):
@@ -15,9 +16,14 @@ class ContactForm(forms.Form):
     )
     student_level = forms.ChoiceField(
         choices=[
-            ('Early Years', 'Early Years'),
-            ('Primary School', 'Primary School'),
-            ('Secondary School', 'Secondary School'),
+            ('SHS 1', 'SHS 1'),
+            ('SHS 2', 'SHS 2'),
+            ('SHS 3', 'SHS 3'),
+        ],
+    )
+    preferred_programme = forms.ChoiceField(
+        choices=[
+            ('', 'Select Preferred Programme'),
         ],
     )
     message = forms.CharField(
@@ -31,6 +37,15 @@ class ContactForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # Dynamically populate preferred_programme choices from the database
+        try:
+            program_choices = [(p.title, p.title) for p in Programme.objects.all()]
+            self.fields['preferred_programme'].choices = [('', 'Select Preferred Programme')] + program_choices
+        except Exception:
+            # Safeguard for initial migrations
+            pass
+
         for name, field in self.fields.items():
             css_class = 'form-select' if isinstance(field.widget, forms.Select) else 'form-control'
             field.widget.attrs.setdefault('class', css_class)

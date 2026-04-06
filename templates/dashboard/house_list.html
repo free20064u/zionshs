@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} | WBM Zion SHS{% endblock %}
+
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <span class="eyebrow">Dashboard Access</span>
+        <h1>{{ page_title }}</h1>
+        <p class="lead mb-0">{{ page_subtitle }}</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="manager-list-card">
+            <div class="manager-list-head">
+                <div>
+                    <h2 class="h4 mb-0">House Records</h2>
+                    <p class="manager-list-meta">Monitor house structure and navigate straight to the students in each house.</p>
+                </div>
+                <span class="manager-list-pill">{{ houses|length }} Total</span>
+            </div>
+
+            <div class="manager-kpi-grid">
+                <div class="manager-kpi-card">
+                    <span class="manager-kpi-label">Displayed Houses</span>
+                    <strong>{{ houses|length }}</strong>
+                </div>
+            </div>
+
+            <div class="table-responsive manager-table-shell">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>House Name</th>
+                            <th>Description</th>
+                            <th>Students</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for house in houses %}
+                            <tr>
+                                <td class="manager-record-title">{{ house.name }}</td>
+                                <td class="manager-record-subtle">{{ house.description|default:"No description" }}</td>
+                                <td><span class="manager-badge-soft">{{ house.students.count }}</span></td>
+                                <td class="text-end">
+                                    <a href="{% url 'student_list' %}?house={{ house.pk }}" class="btn btn-sm btn-outline-primary manager-table-action">View Students</a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">No house records available.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="manager-list-footer">
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Register | Zion Heights School{% endblock %}
+{% block title %}Register | WBM Zion Senior High School{% endblock %}
 
 {% block content %}
 <section class="page-banner">
@@ -13,27 +13,48 @@
 <section class="section">
     <div class="container">
         <div class="auth-shell">
-            <div class="info-card auth-card">
-                <h2>Create your account</h2>
-                <p>Use your email address to register, sign in, and manage your school enquiries.</p>
-                <form method="post" enctype="multipart/form-data" novalidate>
+            <div class="info-card auth-card auth-card-modern">
+                <div class="auth-card-intro">
+                    <span class="auth-kicker">Create Portal Access</span>
+                    <h2>Create your account</h2>
+                    <p>Use your email address to register, sign in, and manage school enquiries, admissions updates, and your personalised portal experience.</p>
+                </div>
+
+                <div class="auth-feature-strip">
+                    <div class="auth-feature-pill">
+                        <svg class="fa-icon" aria-hidden="true"><use href="#fa-bolt"></use></svg>
+                        Fast onboarding
+                    </div>
+                    <div class="auth-feature-pill">
+                        <svg class="fa-icon" aria-hidden="true"><use href="#fa-envelope"></use></svg>
+                        Email-based access
+                    </div>
+                </div>
+
+                <form method="post" enctype="multipart/form-data" novalidate class="modern-form">
                     {% csrf_token %}
                     {% if form.non_field_errors %}
-                        <div class="text-danger small">{{ form.non_field_errors|striptags }}</div>
+                        <div class="form-feedback form-feedback-error">{{ form.non_field_errors|striptags }}</div>
                     {% endif %}
                     <div class="row g-3">
                         {% for field in form %}
                             <div class="col-12">
-                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                {{ field }}
-                                {% if field.errors %}
-                                    <div class="text-danger small">{{ field.errors|striptags }}</div>
-                                {% endif %}
+                                <div class="form-field-group">
+                                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <div class="form-help">{{ field.help_text|safe }}</div>
+                                    {% endif %}
+                                    {% if field.errors %}
+                                        <div class="form-feedback form-feedback-error">{{ field.errors|striptags }}</div>
+                                    {% endif %}
+                                </div>
                             </div>
                         {% endfor %}
                     </div>
-                    <button class="btn btn-primary mt-4" type="submit">Create account</button>
+                    <button class="btn btn-primary btn-modern mt-4 w-100" type="submit">Create account</button>
                 </form>
+
                 <p class="auth-meta">Already registered? <a href="{% url 'login' %}">Sign in here</a>.</p>
             </div>
         </div>

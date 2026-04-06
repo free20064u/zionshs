@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title|default:"Subject List" }} | WBM Zion SHS{% endblock %}
+
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <span class="eyebrow">Dashboard Access</span>
+        <h1>{{ page_title|default:"Academic Subjects" }}</h1>
+        <p class="lead mb-0">{{ page_subtitle|default:"Manager access to subjects from the dashboard." }}</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="manager-list-card">
+            <div class="manager-list-head">
+                <div>
+                    <h2 class="h4 mb-0">Registered Subjects</h2>
+                    <p class="manager-list-meta">A cleaner subject register for curriculum oversight and quick drill-down.</p>
+                </div>
+                <span class="manager-list-pill">{{ subjects.paginator.count }} Total</span>
+            </div>
+
+            <div class="manager-kpi-grid">
+                <div class="manager-kpi-card">
+                    <span class="manager-kpi-label">Displayed Subjects</span>
+                    <strong>{{ subjects.object_list|length }}</strong>
+                </div>
+            </div>
+
+            <div class="table-responsive manager-table-shell">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Subject Name</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for subject in subjects %}
+                            <tr>
+                                <td class="manager-record-title">{{ subject.name }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'subject_detail' subject.pk %}" class="btn btn-sm btn-outline-primary manager-table-action">View Details</a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="2" class="text-center py-4 text-muted">No subjects found in the database.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="manager-list-footer">
+                {% if subjects.has_other_pages %}
+                    <nav aria-label="Page navigation" class="flex">
+                        <ul class="justify-content-center">
+                            {% if subjects.has_previous %}
+                                <li class="">
+                                    <a class="" href="?page={{ subjects.previous_page_number }}">Previous</a>
+                                </li>
+                            {% endif %}
+                            <li class="active"><span class="">{{ subjects.number }}</span></li>
+                            {% if subjects.has_next %}
+                                <li class="">
+                                    <a class="" href="?page={{ subjects.next_page_number }}">Next</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}House Detail | WBM Zion SHS{% endblock %}
+
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <span class="eyebrow">Dashboard Access</span>
+        <h1>{{ house.name }}</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="info-card">
+            <h2 class="h4 mb-4">House Overview</h2>
+            <div class="profile-grid">
+                <div class="profile-item">
+                    <span class="profile-label">House Name</span>
+                    <div class="fw-bold">{{ house.name }}</div>
+                </div>
+                <div class="profile-item">
+                    <span class="profile-label">Students</span>
+                    <div class="fw-bold">{{ house.students.count }}</div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <h3 class="h5 mb-3">Description</h3>
+                <p>{{ house.description|default:"No description provided for this house." }}</p>
+            </div>
+
+            <div class="mt-4">
+                <a href="{% url 'student_list' %}?house={{ house.pk }}" class="btn btn-primary">View House Students</a>
+            </div>
+
+            <div class="mt-4 border-top pt-4">
+                <a href="{% url 'house_list' %}" class="btn btn-outline-secondary">Back to Houses</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
