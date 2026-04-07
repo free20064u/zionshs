@@ -33,6 +33,13 @@ class SchoolClass(models.Model):
         help_text='Full registration year, for example 2026.',
     )
     name = models.CharField(max_length=50, unique=True, editable=False)
+    form_teacher = models.ForeignKey(
+        'teachers.Teacher',
+        on_delete=models.SET_NULL,
+        related_name='form_classes',
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         ordering = ['registration_year', 'programme', 'stream']

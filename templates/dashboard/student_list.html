@@ -17,7 +17,10 @@
             <div class="manager-list-head">
                 <div>
                     <h2 class="h4 mb-0">Student Records</h2>
-                    <p class="manager-list-meta">A cleaner oversight table for admissions, placement, and house assignment.</p>
+                    <p class="manager-list-meta">
+                        A cleaner oversight table for admissions, placement, and house assignment.
+                        {% if selected_class %}Currently viewing {{ selected_class.name }}.{% endif %}
+                    </p>
                 </div>
                 <span class="manager-list-pill">{{ students.paginator.count }} Total</span>
             </div>
@@ -50,6 +53,7 @@
                         <button type="submit" class="btn btn-sm btn-primary w-100">Apply Filters</button>
                     </div>
                     {% if assignment %}<input type="hidden" name="assignment" value="{{ assignment }}">{% endif %}
+                    {% if school_class_id %}<input type="hidden" name="school_class" value="{{ school_class_id }}">{% endif %}
                 </form>
             </div>
 
@@ -63,23 +67,44 @@
                             <th>Programme</th>
                             <th>Class</th>
                             <th>House</th>
-                            <th class="text-end">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for student in students %}
                             <tr>
-                                <td class="manager-record-title">{{ student.admission_number }}</td>
-                                <td>
-                                    <div class="manager-record-title">{{ student.user.get_full_name }}</div>
-                                    
+                                <td class="manager-record-title">
+                                    <a href="{% url 'student_detail' student.pk %}">
+                                        {{ student.admission_number }}
+                                    </a>
                                 </td>
-                                <td><div class="manager-record-subtle">{{ student.user.email }}</div></td>
-                                <td><span class="manager-badge-soft">{{ student.programme }}</span></td>
-                                <td>{{ student.school_class|default:"Not assigned" }}</td>
-                                <td>{% if student.house %}{{ student.house.name }}{% else %}Not assigned{% endif %}</td>
-                                <td class="text-end">
-                                    <a href="{% url 'student_detail' student.pk %}" class="btn btn-sm btn-outline-primary manager-table-action">View</a>
+                                <td>
+                                    <div class="manager-record-subtle">
+                                        <a href="{% url 'student_detail' student.pk %}">
+                                            {{ student.user.get_full_name }}
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="manager-record-subtle">
+                                        <a href="{% url 'student_detail' student.pk %}">{{ student.user.email }}
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="manager-record-title">
+                                        <a href="{% url 'student_detail' student.pk %}">
+                                            {{ student.programme }}
+                                        </a>
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'student_detail' student.pk %}" class="manager-record-title">
+                                        {{ student.school_class|default:"Not assigned" }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'student_detail' student.pk %}" class="manager-record-title">{% if student.house %}{{ student.house.name }}{% else %}Not assigned{% endif %}
+                                    </a>
                                 </td>
                             </tr>
                         {% empty %}

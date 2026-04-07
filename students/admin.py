@@ -12,9 +12,10 @@ class HouseAdmin(admin.ModelAdmin):
 
 @admin.register(SchoolClass)
 class SchoolClassAdmin(admin.ModelAdmin):
-    list_display = ('name', 'programme', 'stream', 'registration_year', 'student_count_display', 'is_full')
-    list_filter = ('programme', 'registration_year', 'stream')
+    list_display = ('name', 'programme', 'stream', 'registration_year', 'form_teacher', 'student_count_display', 'is_full')
+    list_filter = ('programme', 'registration_year', 'stream', 'form_teacher')
     search_fields = ('name', 'programme', 'stream')
+    autocomplete_fields = ('form_teacher',)
 
     def student_count_display(self, obj):
         return obj.student_count

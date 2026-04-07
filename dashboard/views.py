@@ -1,11 +1,16 @@
-from django.core.paginator import Paginator
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import get_object_or_404, render
+from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
+from school.forms import ProgrammeForm
 from school.models import Programme as CourseProgramme
 from school.models import Subject
+from students.forms import StudentAdminForm
 from students.models import House, Programme, SchoolClass, Student
+from teachers.forms import ResponsibilityForm, TeacherAdminForm
+from teachers.models import Responsibility
 from teachers.models import Teacher
 
 
@@ -15,6 +20,7 @@ TOP_MANAGEMENT_ROLES = [
     'Assistant Headteacher Domestic',
     'Assistant Headteacher Administration',
 ]
+FORM_TEACHER_ROLE = Responsibility.ResponsibilityTitle.FORM_TEACHER
 
 
 def _management_titles(user):
@@ -36,6 +42,23 @@ def is_top_management(user):
     if not user.is_authenticated:
         return False
     return user.is_superuser or any(title in TOP_MANAGEMENT_ROLES for title in _management_titles(user))
+
+
+def is_form_teacher(user):
+    if not user.is_authenticated:
+        return False
+    return FORM_TEACHER_ROLE in _management_titles(user)
+
+
+def can_access_class_records(user):
+    return is_top_management(user) or is_form_teacher(user)
+
+
+def _assigned_form_classes(user):
+    teacher_profile = getattr(user, 'teacher_profile', None)
+    if not teacher_profile:
+        return SchoolClass.objects.none()
+    return SchoolClass.objects.filter(form_teacher=teacher_profile)
 
 
 def _page_context(title, subtitle):
@@ -65,6 +88,7 @@ def dashboard_view(request):
         'house_total': House.objects.count(),
         'course_total': CourseProgramme.objects.count(),
         'subject_total': Subject.objects.count(),
+        'responsibility_total': Responsibility.objects.count(),
         'assigned_student_total': Student.objects.exclude(school_class__isnull=True).count(),
         'unassigned_student_total': Student.objects.filter(school_class__isnull=True).count(),
     }
@@ -102,6 +126,13 @@ def dashboard_view(request):
         if department_name in dict(Programme.choices):
             department_student_total = Student.objects.filter(programme=department_name).count()
             department_class_total = SchoolClass.objects.filter(programme=department_name).count()
+    assigned_form_classes = SchoolClass.objects.none()
+    if teacher_profile:
+        assigned_form_classes = (
+            SchoolClass.objects.filter(form_teacher=teacher_profile)
+            .prefetch_related('students')
+            .order_by('registration_year', 'programme', 'stream')
+        )
 
     panel_map = {
         'Headteacher': {
@@ -113,6 +144,7 @@ def dashboard_view(request):
                 {'label': 'Houses', 'value': school_stats['house_total'], 'url': reverse('house_list'), 'icon': 'fa-trophy'},
                 {'label': 'Courses', 'value': school_stats['course_total'], 'url': reverse('course_list'), 'icon': 'fa-book-open'},
                 {'label': 'Subjects', 'value': school_stats['subject_total'], 'url': reverse('subject_list'), 'icon': 'fa-star'},
+                {'label': 'Responsibilities', 'value': school_stats['responsibility_total'], 'url': reverse('responsibility_list'), 'icon': 'fa-shield-check'},
             ],
         },
         'Assistant Headteacher Academic': {
@@ -135,6 +167,7 @@ def dashboard_view(request):
                 {'label': 'School Classes', 'value': school_stats['class_total'], 'url': reverse('class_list'), 'icon': 'fa-book-open'},
                 {'label': 'Courses', 'value': school_stats['course_total'], 'url': reverse('course_list'), 'icon': 'fa-book-open'},
                 {'label': 'Subjects', 'value': school_stats['subject_total'], 'url': reverse('subject_list'), 'icon': 'fa-star'},
+                {'label': 'Responsibilities', 'value': school_stats['responsibility_total'], 'url': reverse('responsibility_list'), 'icon': 'fa-shield-check'},
             ],
         },
         'Head of Department': {
@@ -177,6 +210,10 @@ def dashboard_view(request):
         {'label': 'Total Courses', 'value': school_stats['course_total'], 'icon': 'fa-book-open', 'url': reverse('course_list')},
         {'label': 'Total Subjects', 'value': school_stats['subject_total'], 'icon': 'fa-star', 'url': reverse('subject_list')},
     ]
+    if is_top_management(user):
+        display_school_stats.append(
+            {'label': 'Responsibilities', 'value': school_stats['responsibility_total'], 'icon': 'fa-shield-check', 'url': reverse('responsibility_list')}
+        )
 
     context = {
         'dashboard_kind': dashboard_kind,
@@ -184,18 +221,25 @@ def dashboard_view(request):
         'teacher_profile': teacher_profile,
         'responsibility_panels': responsibility_panels,
         'display_school_stats': display_school_stats,
+        'assigned_form_classes': assigned_form_classes,
+        'is_form_teacher': is_form_teacher(user),
     }
     return render(request, 'dashboard/index.html', context)
 
 
 @login_required
-@user_passes_test(is_top_management)
+@user_passes_test(can_access_class_records)
 def student_list(request):
     students = Student.objects.select_related('user', 'house', 'school_class').order_by('admission_number')
     q = request.GET.get('q', '').strip()
     programme = request.GET.get('programme', '')
     house_id = request.GET.get('house', '')
     assignment = request.GET.get('assignment', '')
+    school_class_id = request.GET.get('school_class', '')
+
+    if not is_top_management(request.user):
+        assigned_classes = _assigned_form_classes(request.user)
+        students = students.filter(school_class__in=assigned_classes)
 
     if q:
         students = students.filter(user__first_name__icontains=q)
@@ -207,10 +251,17 @@ def student_list(request):
         students = students.exclude(school_class__isnull=True)
     elif assignment == 'unassigned':
         students = students.filter(school_class__isnull=True)
+    if school_class_id:
+        students = students.filter(school_class_id=school_class_id)
 
     paginator = Paginator(students, 10)
     page_number = request.GET.get('page')
     students = paginator.get_page(page_number)
+
+    selected_class = None
+    if school_class_id:
+        visible_classes = _assigned_form_classes(request.user) if not is_top_management(request.user) else SchoolClass.objects.all()
+        selected_class = visible_classes.filter(pk=school_class_id).first()
 
     context = {
         'students': students,
@@ -218,9 +269,16 @@ def student_list(request):
         'programme': programme,
         'assignment': assignment,
         'house_id': house_id,
+        'school_class_id': school_class_id,
+        'selected_class': selected_class,
         'all_houses': House.objects.all().order_by('name'),
         'all_programmes': Programme.choices,
-        **_page_context('Students', 'Manager access to student records from the dashboard.'),
+        **_page_context(
+            'Students',
+            'Manager access to student records from the dashboard.'
+            if is_top_management(request.user)
+            else 'Students in your assigned form class.',
+        ),
     }
     return render(request, 'dashboard/student_list.html', context)
 
@@ -229,9 +287,21 @@ def student_list(request):
 @user_passes_test(is_top_management)
 def teacher_list(request):
     teachers = Teacher.objects.select_related('user').prefetch_related('responsibilities').order_by('staff_id')
-    department = request.GET.get('department')
+
+    q = request.GET.get('q', '').strip()
+    department = request.GET.get('department', '')
+    specialty = request.GET.get('specialty', '')
+
+    if q:
+        teachers = teachers.filter(user__first_name__icontains=q)
     if department:
         teachers = teachers.filter(department=department)
+    if specialty:
+        teachers = teachers.filter(subject_specialty=specialty)
+
+    # Dynamically fetch existing values for filters
+    all_departments = Teacher.objects.exclude(department__in=['', None]).values_list('department', flat=True).distinct().order_by('department')
+    all_specialties = Teacher.objects.exclude(subject_specialty__in=['', None]).values_list('subject_specialty', flat=True).distinct().order_by('subject_specialty')
 
     paginator = Paginator(teachers, 10)
     page_number = request.GET.get('page')
@@ -239,17 +309,24 @@ def teacher_list(request):
 
     context = {
         'teachers': teachers,
+        'q': q,
         'department': department,
+        'specialty': specialty,
+        'all_departments': all_departments,
+        'all_specialties': all_specialties,
         **_page_context('Teachers', 'Manager access to teaching and leadership staff records.'),
     }
     return render(request, 'dashboard/teacher_list.html', context)
 
 
 @login_required
-@user_passes_test(is_top_management)
+@user_passes_test(can_access_class_records)
 def class_list(request):
-    classes = SchoolClass.objects.prefetch_related('students').order_by('registration_year', 'programme', 'stream')
+    classes = SchoolClass.objects.select_related('form_teacher__user').prefetch_related('students').order_by('registration_year', 'programme', 'stream')
     programme = request.GET.get('programme')
+
+    if not is_top_management(request.user):
+        classes = classes.filter(form_teacher=getattr(request.user, 'teacher_profile', None))
     if programme:
         classes = classes.filter(programme=programme)
 
@@ -260,7 +337,12 @@ def class_list(request):
     context = {
         'classes': classes,
         'programme': programme,
-        **_page_context('Classes', 'Manager access to school classes and enrolment counts.'),
+        **_page_context(
+            'Classes',
+            'Manager access to school classes and enrolment counts.'
+            if is_top_management(request.user)
+            else 'Classes assigned to you as a form teacher.',
+        ),
     }
     return render(request, 'dashboard/class_list.html', context)
 
@@ -297,6 +379,57 @@ def course_list(request):
 
 @login_required
 @user_passes_test(is_top_management)
+def course_create(request):
+    if request.method == 'POST':
+        form = ProgrammeForm(request.POST)
+        if form.is_valid():
+            course = form.save()
+            messages.success(request, f'{course.title} created successfully.')
+            return redirect('course_detail', pk=course.pk)
+    else:
+        form = ProgrammeForm()
+
+    return render(
+        request,
+        'dashboard/course_form.html',
+        {
+            'form': form,
+            'page_heading': 'Add Course',
+            'page_description': 'Create a new course and link the subjects it should include.',
+            'submit_label': 'Create Course',
+        },
+    )
+
+
+@login_required
+@user_passes_test(is_top_management)
+def course_edit(request, pk):
+    course = get_object_or_404(CourseProgramme, pk=pk)
+
+    if request.method == 'POST':
+        form = ProgrammeForm(request.POST, instance=course)
+        if form.is_valid():
+            course = form.save()
+            messages.success(request, f'{course.title} updated successfully.')
+            return redirect('course_detail', pk=course.pk)
+    else:
+        form = ProgrammeForm(instance=course)
+
+    return render(
+        request,
+        'dashboard/course_form.html',
+        {
+            'form': form,
+            'course': course,
+            'page_heading': f'Edit {course.title}',
+            'page_description': 'Update course details, subject links, and display order.',
+            'submit_label': 'Save Changes',
+        },
+    )
+
+
+@login_required
+@user_passes_test(is_top_management)
 def subject_list(request):
     subjects = Subject.objects.all().order_by('name')
     paginator = Paginator(subjects, 10)
@@ -312,9 +445,111 @@ def subject_list(request):
 
 @login_required
 @user_passes_test(is_top_management)
+def responsibility_list(request):
+    responsibilities = Responsibility.objects.prefetch_related('teachers').order_by('title')
+    paginator = Paginator(responsibilities, 10)
+    page_number = request.GET.get('page')
+    responsibilities = paginator.get_page(page_number)
+
+    context = {
+        'responsibilities': responsibilities,
+        **_page_context('Responsibilities', 'Manager access to school leadership and operational responsibilities.'),
+    }
+    return render(request, 'dashboard/responsibility_list.html', context)
+
+
+@login_required
+@user_passes_test(is_top_management)
+def responsibility_create(request):
+    if request.method == 'POST':
+        form = ResponsibilityForm(request.POST)
+        if form.is_valid():
+            responsibility = form.save()
+            messages.success(request, f'{responsibility.title} created successfully.')
+            return redirect('responsibility_list')
+    else:
+        form = ResponsibilityForm()
+
+    return render(
+        request,
+        'dashboard/responsibility_form.html',
+        {
+            'form': form,
+            'page_heading': 'Add Responsibility',
+            'page_description': 'Create a new responsibility that can be assigned to teachers.',
+            'submit_label': 'Create Responsibility',
+        },
+    )
+
+
+@login_required
+@user_passes_test(is_top_management)
+def responsibility_edit(request, pk):
+    responsibility = get_object_or_404(Responsibility, pk=pk)
+
+    if request.method == 'POST':
+        form = ResponsibilityForm(request.POST, instance=responsibility)
+        if form.is_valid():
+            responsibility = form.save()
+            messages.success(request, f'{responsibility.title} updated successfully.')
+            return redirect('responsibility_list')
+    else:
+        form = ResponsibilityForm(instance=responsibility)
+
+    return render(
+        request,
+        'dashboard/responsibility_form.html',
+        {
+            'form': form,
+            'responsibility': responsibility,
+            'page_heading': f'Edit {responsibility.title}',
+            'page_description': 'Update a responsibility used for teacher assignments and leadership roles.',
+            'submit_label': 'Save Changes',
+        },
+    )
+
+
+@login_required
 def student_detail(request, pk):
     student = get_object_or_404(Student, pk=pk)
-    return render(request, 'dashboard/student_detail.html', {'student': student})
+    allowed = is_top_management(request.user)
+    teacher_profile = getattr(request.user, 'teacher_profile', None)
+    if not allowed and is_form_teacher(request.user) and teacher_profile:
+        allowed = student.school_class_id is not None and student.school_class.form_teacher_id == teacher_profile.pk
+    if not allowed:
+        return redirect('dashboard')
+    return render(
+        request,
+        'dashboard/student_detail.html',
+        {
+            'student': student,
+            'can_edit_student': is_top_management(request.user),
+        },
+    )
+
+
+@login_required
+@user_passes_test(is_top_management)
+def student_edit(request, pk):
+    student = get_object_or_404(Student, pk=pk)
+
+    if request.method == 'POST':
+        form = StudentAdminForm(request.POST, request.FILES, instance=student)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Student details updated successfully.')
+            return redirect('student_detail', pk=student.pk)
+    else:
+        form = StudentAdminForm(instance=student)
+
+    return render(
+        request,
+        'dashboard/student_edit.html',
+        {
+            'student': student,
+            'form': form,
+        },
+    )
 
 
 @login_required
@@ -322,6 +557,30 @@ def student_detail(request, pk):
 def teacher_detail(request, pk):
     teacher = get_object_or_404(Teacher, pk=pk)
     return render(request, 'dashboard/teacher_detail.html', {'teacher': teacher})
+
+
+@login_required
+@user_passes_test(is_top_management)
+def teacher_edit(request, pk):
+    teacher = get_object_or_404(Teacher, pk=pk)
+
+    if request.method == 'POST':
+        form = TeacherAdminForm(request.POST, request.FILES, instance=teacher)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Teacher details updated successfully.')
+            return redirect('teacher_detail', pk=teacher.pk)
+    else:
+        form = TeacherAdminForm(instance=teacher)
+
+    return render(
+        request,
+        'dashboard/teacher_edit.html',
+        {
+            'teacher': teacher,
+            'form': form,
+        },
+    )
 
 
 @login_required

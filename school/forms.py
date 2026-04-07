@@ -2,6 +2,22 @@ from django import forms
 from .models import Programme
 
 
+class ProgrammeForm(forms.ModelForm):
+    class Meta:
+        model = Programme
+        fields = ('title', 'description', 'subjects', 'order')
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 5}),
+            'subjects': forms.SelectMultiple(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            css_class = 'form-select' if isinstance(field.widget, (forms.Select, forms.SelectMultiple)) else 'form-control'
+            field.widget.attrs.setdefault('class', css_class)
+
+
 class ContactForm(forms.Form):
     full_name = forms.CharField(
         max_length=100,

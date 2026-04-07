@@ -11,11 +11,11 @@ class Responsibility(models.Model):
         HEAD_OF_DEPARTMENT = 'Head of Department', 'Head of Department'
         SENIOR_HOUSE_TEACHER = 'Senior House Teacher', 'Senior House Teacher'
         HOUSE_TEACHER = 'House Teacher', 'House Teacher'
+        FORM_TEACHER = 'Form Teacher', 'Form Teacher'
 
     title = models.CharField(
         max_length=120,
         unique=True,
-        choices=ResponsibilityTitle.choices,
     )
     description = models.TextField(blank=True)
 

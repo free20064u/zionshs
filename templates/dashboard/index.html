@@ -56,6 +56,30 @@
                 </section>
             {% endif %}
 
+            {% if dashboard_kind == 'teacher' and is_form_teacher and assigned_form_classes %}
+                <section class="dashboard-panel-modern">
+                    <div class="dashboard-panel-header">
+                        <div>
+                            <span class="dashboard-section-tag">Form Teacher</span>
+                            <h2 class="h4 mb-1">Assigned Classes</h2>
+                        </div>
+                    </div>
+                    <div class="dashboard-metric-grid">
+                        {% for school_class in assigned_form_classes %}
+                            <a href="{% url 'class_list' %}" class="dashboard-metric-card text-decoration-none">
+                                <div>
+                                    <span class="dashboard-metric-icon">
+                                        <svg class="fa-icon" style="width:22px; height:22px;"><use href="#fa-book-open"></use></svg>
+                                    </span>
+                                    <span class="dashboard-metric-value">{{ school_class.name }}</span>
+                                </div>
+                                <div class="dashboard-metric-label">{{ school_class.student_count }} Students</div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+
             {% if responsibility_panels %}
                 <div class="dashboard-panel-stack">
                     {% for panel in responsibility_panels %}
@@ -69,10 +93,12 @@
                             <div class="dashboard-metric-grid">
                                 {% for stat in panel.stats %}
                                     <{% if stat.url %}a href="{{ stat.url }}"{% else %}div{% endif %} class="dashboard-metric-card text-decoration-none">
-                                        <div class="dashboard-metric-icon">
-                                            <svg class="fa-icon" style="width:22px; height:22px;"><use href="#{{ stat.icon|default:'fa-star' }}"></use></svg>
+                                        <div>
+                                            <span class="dashboard-metric-icon">
+                                            <svg class="fa-icon" style="width:22px; height:22px;"><use href="#{{ stat.icon }}"></use></svg>
+                                            </span>
+                                            <span class="dashboard-metric-value">{{ stat.value }}</span>
                                         </div>
-                                        <div class="dashboard-metric-value">{{ stat.value }}</div>
                                         <div class="dashboard-metric-label">{{ stat.label }}</div>
                                     </{% if stat.url %}a{% else %}div{% endif %}>
                                 {% endfor %}
@@ -92,10 +118,12 @@
                 <div class="dashboard-metric-grid">
                     {% for stat in display_school_stats %}
                         <{% if stat.url %}a href="{{ stat.url }}"{% else %}div{% endif %} class="dashboard-metric-card dashboard-metric-card-school text-decoration-none">
-                            <div class="dashboard-metric-icon">
+                            <div>
+                                <span class="dashboard-metric-icon">
                                 <svg class="fa-icon" style="width:22px; height:22px;"><use href="#{{ stat.icon }}"></use></svg>
+                                </span>
+                                <span class="dashboard-metric-value">{{ stat.value }}</span>
                             </div>
-                            <div class="dashboard-metric-value">{{ stat.value }}</div>
                             <div class="dashboard-metric-label">{{ stat.label }}</div>
                         </{% if stat.url %}a{% else %}div{% endif %}>
                     {% endfor %}

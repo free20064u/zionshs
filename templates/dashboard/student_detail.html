@@ -7,7 +7,6 @@
 <section class="page-banner">
     <div class="container">
         <span class="eyebrow">Student Management</span>
-        <h1>{{ student.user.get_full_name }}</h1>
     </div>
 </section>
 
@@ -15,7 +14,7 @@
     <div class="container">
         <div class="info-card">
             <div class="row g-4">
-                <div class="col-md-4">
+                <div class="col-md-4 col-lg-3">
                     <div class="profile-avatar-shell mb-3">
                         {% if student.user.profile_picture %}
                             <img src="{{ student.user.profile_picture.url }}" alt="{{ student.user.first_name }}" class="w-100 rounded shadow-sm">
@@ -25,23 +24,32 @@
                     </div>
                     <span class="badge bg-primary fs-6 w-100 p-2">Admission: {{ student.admission_number }}</span>
                 </div>
-                <div class="col-md-8">
-                    <h3>Academic Information</h3>
-                    <ul class="list-group list-group-flush mb-4">
-                        <li class="list-group-item d-flex justify-content-between"><span>Programme:</span> <strong>{{ student.get_programme_display }}</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>Class:</span> <strong>{{ student.school_class|default:"Not assigned" }}</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>House:</span> <strong>{{ student.house|default:"Not assigned" }}</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>Date Admitted:</span> <strong>{{ student.date_admitted|date:"F j, Y" }}</strong></li>
-                    </ul>
-                    
-                    <h3>Personal Details</h3>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item d-flex justify-content-between"><span>Email:</span> <strong>{{ student.user.email }}</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>Guardian:</span> <strong>{{ student.guardian_name|default:"Not specified" }}</strong></li>
-                    </ul>
+                <div class="col-md-8 col-lg-9">
+                    <div class="row g-4">
+                        <div class="col-md-6">                    
+                            <h3>Personal Details</h3>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between"><span>Name:</span> <strong>{{ student.user.get_full_name }}</strong></li>
+                                <li class="list-group-item d-flex justify-content-between"><span>Email:</span> <strong>{{ student.user.email }}</strong></li>
+                                <li class="list-group-item d-flex justify-content-between"><span>Guardian:</span> <strong>{{ student.guardian_name|default:"Not specified" }}</strong></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h3>Academic Information</h3>
+                            <ul class="list-group list-group-flush mb-4">
+                                <li class="list-group-item d-flex justify-content-between"><span>Programme:</span> <strong>{{ student.get_programme_display }}</strong></li>
+                                <li class="list-group-item d-flex justify-content-between"><span>Class:</span> <strong>{{ student.school_class|default:"Not assigned" }}</strong></li>
+                                <li class="list-group-item d-flex justify-content-between"><span>House:</span> <strong>{{ student.house|default:"Not assigned" }}</strong></li>
+                                <li class="list-group-item d-flex justify-content-between"><span>Date Admitted:</span> <strong>{{ student.date_admitted|date:"F j, Y" }}</strong></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="mt-4 border-top pt-4">
+                {% if can_edit_student %}
+                    <a href="{% url 'student_edit' student.pk %}" class="btn btn-primary">Edit Student</a>
+                {% endif %}
                 <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">Back to Dashboard</a>
             </div>
         </div>

@@ -22,15 +22,34 @@
                 <span class="manager-list-pill">{{ teachers.paginator.count }} Total</span>
             </div>
 
-            <div class="manager-kpi-grid">
-                <div class="manager-kpi-card">
-                    <span class="manager-kpi-label">Displayed Teachers</span>
-                    <strong>{{ teachers.object_list|length }}</strong>
-                </div>
-                <div class="manager-kpi-card">
-                    <span class="manager-kpi-label">Department Filter</span>
-                    <strong>{{ department|default:"All" }}</strong>
-                </div>
+            <div class="manager-list-filters mb-4 px-3">
+                <form method="get" class="row g-2 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">Search Name</label>
+                        <input type="text" name="q" class="form-control form-control-sm" placeholder="Teacher first name..." value="{{ q }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold text-muted">Department</label>
+                        <select name="department" class="form-select form-select-sm">
+                            <option value="">All Departments</option>
+                            {% for dept in all_departments %}
+                                <option value="{{ dept }}" {% if department == dept %}selected{% endif %}>{{ dept }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold text-muted">Specialty</label>
+                        <select name="specialty" class="form-select form-select-sm">
+                            <option value="">All Specialties</option>
+                            {% for spec in all_specialties %}
+                                <option value="{{ spec }}" {% if specialty == spec %}selected{% endif %}>{{ spec }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-sm btn-primary w-100">Apply Filters</button>
+                    </div>
+                </form>
             </div>
 
             <div class="table-responsive manager-table-shell">
@@ -42,21 +61,41 @@
                             <th>Email</th>
                             <th>Department</th>
                             <th>Specialty</th>
-                            <th class="text-end">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for teacher in teachers %}
                             <tr>
-                                <td class="manager-record-title">{{ teacher.staff_id }}</td>
-                                <td>
-                                    <div class="manager-record-title">{{ teacher.user.get_full_name }}</div>   
+                                <td class="manager-record-title">
+                                    <a href="{% url 'teacher_detail' teacher.pk %}">
+                                        {{ teacher.staff_id }}
+                                    </a>
                                 </td>
-                                <td><div class="manager-record-subtle">{{ teacher.user.email }}</div></td>
-                                <td><span class="manager-badge-soft">{{ teacher.department }}</span></td>
-                                <td>{{ teacher.subject_specialty|default:"Not assigned" }}</td>
-                                <td class="text-end">
-                                    <a href="{% url 'teacher_detail' teacher.pk %}" class="btn btn-sm btn-outline-primary manager-table-action">View</a>
+                                <td>
+                                    <div class="manager-record-title">
+                                        <a href="{% url 'teacher_detail' teacher.pk %}">
+                                            {{ teacher.user.get_full_name }}
+                                        </a>
+                                    </div>   
+                                </td>
+                                <td>
+                                    <div class="manager-record-subtle">
+                                        <a href="{% url 'teacher_detail' teacher.pk %}">
+                                            {{ teacher.user.email }}
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="">
+                                        <a href="{% url 'teacher_detail' teacher.pk %}">
+                                            {{ teacher.department }}
+                                        </a>
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'teacher_detail' teacher.pk %}">
+                                        {{ teacher.subject_specialty|default:"Not assigned" }}
+                                    </a>
                                 </td>
                             </tr>
                         {% empty %}
@@ -72,13 +111,13 @@
                 {% if teachers.has_other_pages %}
                     <div class="manager-pagination">
                         {% if teachers.has_previous %}
-                            <a class="manager-pagination-link" href="?page=1{% if department %}&department={{ department }}{% endif %}">First</a>
-                            <a class="manager-pagination-link" href="?page={{ teachers.previous_page_number }}{% if department %}&department={{ department }}{% endif %}">Previous</a>
+                            <a class="manager-pagination-link" href="?page=1&q={{ q|default:'' }}&department={{ department|default:'' }}&specialty={{ specialty|default:'' }}">First</a>
+                            <a class="manager-pagination-link" href="?page={{ teachers.previous_page_number }}&q={{ q|default:'' }}&department={{ department|default:'' }}&specialty={{ specialty|default:'' }}">Previous</a>
                         {% endif %}
                         <span class="manager-pagination-current">{{ teachers.number }}</span>
                         {% if teachers.has_next %}
-                            <a class="manager-pagination-link" href="?page={{ teachers.next_page_number }}{% if department %}&department={{ department }}{% endif %}">Next</a>
-                            <a class="manager-pagination-link" href="?page={{ teachers.paginator.num_pages }}{% if department %}&department={{ department }}{% endif %}">Last</a>
+                            <a class="manager-pagination-link" href="?page={{ teachers.next_page_number }}&q={{ q|default:'' }}&department={{ department|default:'' }}&specialty={{ specialty|default:'' }}">Next</a>
+                            <a class="manager-pagination-link" href="?page={{ teachers.paginator.num_pages }}&q={{ q|default:'' }}&department={{ department|default:'' }}&specialty={{ specialty|default:'' }}">Last</a>
                         {% endif %}
                     </div>
                 {% endif %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_heading }} | WBM Zion SHS{% endblock %}
+
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <span class="eyebrow">Dashboard Access</span>
+        <h1>{{ page_heading }}</h1>
+        <p class="lead mb-0">{{ page_description }}</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="manager-list-card">
+            <form method="post" novalidate class="modern-form">
+                {% csrf_token %}
+                <div class="row g-4">
+                    {% for field in form %}
+                        <div class="{% if field.name == 'description' %}col-12{% else %}col-md-6{% endif %}">
+                            <div class="form-field-group">
+                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <small class="form-help">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <div class="form-feedback text-danger bg-danger-subtle border border-danger-subtle">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="mt-3">
+                        {% for error in form.non_field_errors %}
+                            <div class="form-feedback text-danger bg-danger-subtle border border-danger-subtle">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">{{ submit_label }}</button>
+                    <a href="{% url 'responsibility_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

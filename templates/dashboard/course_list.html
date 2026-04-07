@@ -16,10 +16,13 @@
         <div class="manager-list-card">
             <div class="manager-list-head">
                 <div>
-                    <h2 class="h4 mb-0">Course Records</h2>
+                    <h2 cl`ass="h4 mb-0">Course Records</h2>
                     <p class="manager-list-meta">Review programmes, linked subjects, and curriculum structure more clearly.</p>
                 </div>
-                <span class="manager-list-pill">{{ courses|length }} Total</span>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <span class="manager-list-pill">{{ courses|length }} Total</span>
+                    <a href="{% url 'course_create' %}" class="btn btn-primary">Add Course</a>
+                </div>
             </div>
 
             <div class="manager-kpi-grid">

@@ -3,7 +3,21 @@ from django import forms
 from accounts.models import CustomUser
 from accounts.services import create_managed_user
 
-from .models import Teacher
+from .models import Responsibility, Teacher
+
+
+class ResponsibilityForm(forms.ModelForm):
+    class Meta:
+        model = Responsibility
+        fields = ('title', 'description')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            css_class = 'form-control'
+            if isinstance(field.widget, forms.Textarea):
+                field.widget.attrs.setdefault('rows', 4)
+            field.widget.attrs.setdefault('class', css_class)
 
 
 class TeacherAdminForm(forms.ModelForm):

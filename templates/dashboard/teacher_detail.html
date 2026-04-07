@@ -7,7 +7,6 @@
 <section class="page-banner">
     <div class="container">
         <span class="eyebrow">Staff Management</span>
-        <h1>{{ teacher.user.get_full_name }}</h1>
     </div>
 </section>
 
@@ -26,13 +25,26 @@
                     <span class="badge bg-success fs-6 w-100 p-2">Staff ID: {{ teacher.staff_id }}</span>
                 </div>
                 <div class="col-md-8">
-                    <h3>Professional Profile</h3>
-                    <ul class="list-group list-group-flush mb-4">
-                        <li class="list-group-item d-flex justify-content-between"><span>Department:</span> <strong>{{ teacher.department }}</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>Specialty:</span> <strong>{{ teacher.subject_specialty }}</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>Phone Number:</span> <strong>{{ teacher.phone_number }}</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>Email Address:</span> <strong>{{ teacher.user.email }}</strong></li>
-                    </ul>
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <h3>Personal Information</h3>
+                            <ul class="list-group list-group-flush mb-4">
+                                <li class="list-group-item d-flex justify-content-between"><span>Full Name:</span> <strong>{{ teacher.user.get_full_name }}</strong></li>
+                                <li class="list-group-item d-flex justify-content-between"><span>Gender:</span> <strong>{{ teacher.user.gender|default:"Not specified" }}</strong></li>
+                                <li class="list-group-item d-flex justify-content-between"><span>Email Address:</span> <strong>{{ teacher.user.email }}</strong></li>
+                                <li class="list-group-item d-flex justify-content-between"><span>Phone Number:</span> <strong>{{ teacher.phone_number|default:"Not specified" }}</strong></li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-6">
+                            <h3>Professional Profile</h3>
+                            <ul class="list-group list-group-flush mb-4">
+                                <li class="list-group-item d-flex justify-content-between"><span>Department:</span> <strong>{{ teacher.department }}</strong></li>
+                                <li class="list-group-item d-flex justify-content-between"><span>Specialty:</span> <strong>{{ teacher.subject_specialty|default:"Not specified" }}</strong></li>
+                                <li class="list-group-item d-flex justify-content-between"><span>Date Hired:</span> <strong>{{ teacher.date_hired|date:"F j, Y"|default:"Not specified" }}</strong></li>
+                                <li class="list-group-item d-flex justify-content-between"><span>Staff ID:</span> <strong>{{ teacher.staff_id }}</strong></li>
+                            </ul>
+                        </div>
+                    </div>
                     
                     <h3>Management Roles</h3>
                     <div class="dashboard-chip-list">
@@ -44,7 +56,10 @@
                     </div>
                 </div>
             </div>
-            <a href="{% url 'dashboard' %}" class="btn btn-outline-primary mt-4">Back to Dashboard</a>
+            <div class="d-flex flex-wrap gap-2 mt-4">
+                <a href="{% url 'teacher_edit' teacher.pk %}" class="btn btn-primary">Edit Teacher</a>
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">Back to Dashboard</a>
+            </div>
         </div>
     </div>
 </section>
