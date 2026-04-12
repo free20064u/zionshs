@@ -3,8 +3,23 @@ from django import forms
 from accounts.models import CustomUser
 from accounts.services import create_managed_user
 
-from .models import House, Student
+from .models import House, Student, SchoolClass
+from teachers.models import Teacher
 
+class SchoolClassForm(forms.ModelForm):
+    class Meta:
+        model = SchoolClass
+        fields = ('programme', 'stream', 'registration_year', 'form_teacher')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        qs = Teacher.objects.filter(responsibility__title__iexact='Form Teacher')
+        if self.instance.pk and self.instance.form_teacher:
+            qs = qs | Teacher.objects.filter(pk=self.instance.form_teacher.pk)
+        self.fields['form_teacher'].queryset = qs.distinct()
+        for field in self.fields.values():
+            css_class = 'form-select' if isinstance(field.widget, forms.Select) else 'form-control'
+            field.widget.attrs.setdefault('class', css_class)
 
 class HouseForm(forms.ModelForm):
     COLOR_PRESET_CHOICES = [
@@ -30,7 +45,7 @@ class HouseForm(forms.ModelForm):
 
     class Meta:
         model = House
-        fields = ('name', 'color', 'description')
+        fields = ('name', 'color', 'house_teacher', 'description')
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
             'color': forms.TextInput(attrs={'type': 'color'}),
@@ -43,6 +58,14 @@ class HouseForm(forms.ModelForm):
         preset_values = dict(self.COLOR_PRESET_CHOICES)
         if initial_color in preset_values:
             self.fields['color_preset'].initial = initial_color
+        
+        # Filter house teachers
+        qs = Teacher.objects.filter(responsibility__title__iexact='House Teacher')
+        if self.instance.pk and self.instance.house_teacher:
+            qs = qs | Teacher.objects.filter(pk=self.instance.house_teacher.pk)
+        self.fields['house_teacher'].queryset = qs.distinct()
+        self.fields['house_teacher'].empty_label = 'Select House Master'
+        
         for field in self.fields.values():
             css_class = 'form-select' if isinstance(field.widget, forms.Select) else 'form-control'
             field.widget.attrs.setdefault('class', css_class)
@@ -51,6 +74,7 @@ class HouseForm(forms.ModelForm):
 class StudentAdminForm(forms.ModelForm):
     email = forms.EmailField()
     first_name = forms.CharField(max_length=150)
+    middle_name = forms.CharField(max_length=150, required=False)
     last_name = forms.CharField(max_length=150)
     gender = forms.ChoiceField(
         choices=[('', '---------'), *CustomUser.Gender.choices],
@@ -61,11 +85,12 @@ class StudentAdminForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = (
+            'profile_picture',
             'email',
             'first_name',
+            'middle_name',
             'last_name',
             'gender',
-            'profile_picture',
             'admission_number',
             'programme',
             'house',
@@ -83,6 +108,7 @@ class StudentAdminForm(forms.ModelForm):
         if user:
             self.fields['email'].initial = user.email
             self.fields['first_name'].initial = user.first_name
+            self.fields['middle_name'].initial = user.middle_name
             self.fields['last_name'].initial = user.last_name
             self.fields['gender'].initial = user.gender
             self.fields['profile_picture'].required = False
@@ -110,6 +136,7 @@ class StudentAdminForm(forms.ModelForm):
             user = self.instance.user
             user.email = self.cleaned_data['email']
             user.first_name = self.cleaned_data['first_name']
+            user.middle_name = self.cleaned_data['middle_name']
             user.last_name = self.cleaned_data['last_name']
             user.gender = self.cleaned_data['gender']
             user.role = CustomUser.Role.STUDENT
@@ -126,6 +153,7 @@ class StudentAdminForm(forms.ModelForm):
         user, self.temporary_password = create_managed_user(
             email=self.cleaned_data['email'],
             first_name=self.cleaned_data['first_name'],
+            middle_name=self.cleaned_data['middle_name'],
             last_name=self.cleaned_data['last_name'],
             gender=self.cleaned_data['gender'],
             profile_picture=self.cleaned_data.get('profile_picture'),

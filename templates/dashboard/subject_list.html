@@ -22,6 +22,27 @@
                 <span class="manager-list-pill">{{ subjects.paginator.count }} Total</span>
             </div>
 
+            <div class="manager-list-filters mb-4 px-3">
+                <form method="get" class="row g-2 align-items-end">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-muted">Search Name</label>
+                        <input type="text" name="q" class="form-control form-control-sm" placeholder="Subject name..." value="{{ q }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">Department</label>
+                        <select name="department" class="form-select form-select-sm">
+                            <option value="">All Departments</option>
+                            {% for dept in all_departments %}
+                                <option value="{{ dept.pk }}" {% if department_id == dept.pk|stringformat:"s" %}selected{% endif %}>{{ dept.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-sm btn-primary w-100">Apply Filters</button>
+                    </div>
+                </form>
+            </div>
+
             <div class="manager-kpi-grid">
                 <div class="manager-kpi-card">
                     <span class="manager-kpi-label">Displayed Subjects</span>
@@ -34,6 +55,7 @@
                     <thead>
                         <tr>
                             <th>Subject Name</th>
+                            <th>Department</th>
                             <th class="text-end">Actions</th>
                         </tr>
                     </thead>
@@ -41,13 +63,14 @@
                         {% for subject in subjects %}
                             <tr>
                                 <td class="manager-record-title">{{ subject.name }}</td>
+                                <td class="manager-record-subtle">{{ subject.department.name|default:"Not assigned" }}</td>
                                 <td class="text-end">
                                     <a href="{% url 'subject_detail' subject.pk %}" class="btn btn-sm btn-outline-primary manager-table-action">View Details</a>
                                 </td>
                             </tr>
                         {% empty %}
                             <tr>
-                                <td colspan="2" class="text-center py-4 text-muted">No subjects found in the database.</td>
+                                <td colspan="3" class="text-center py-4 text-muted">No subjects found matching your criteria.</td>
                             </tr>
                         {% endfor %}
                     </tbody>

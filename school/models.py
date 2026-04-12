@@ -25,8 +25,19 @@ class NewsItem(models.Model):
         ordering = ['-pub_date', '-created_at'] # Order by newest first
         verbose_name_plural = "News Items"
 
+class Department(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+
 class Subject(models.Model):
     name = models.CharField(max_length=100)
+    department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True, related_name='subjects')
 
     def __str__(self):
         return self.name

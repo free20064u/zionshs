@@ -1,4 +1,6 @@
 import random
+import os
+from django.conf import settings
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -6,7 +8,7 @@ from faker import Faker
 
 from accounts.models import CustomUser
 from school.models import Programme as CourseProgramme
-from school.models import Subject
+from school.models import Subject, Department
 from students.models import House, Programme, SchoolClass, Student
 from teachers.models import Responsibility, Teacher
 
@@ -35,12 +37,15 @@ class Command(BaseCommand):
 
         self._ensure_houses()
         self._ensure_responsibilities()
-        created_subjects, created_courses = self._ensure_subjects_and_courses(fake)
+        created_subjects, created_courses, created_departments = self._ensure_subjects_and_courses(fake)
 
         created_students = self._create_students(fake, student_count, registration_year)
         created_teachers = self._create_teachers(fake, teacher_count)
         created_managers = self._create_management_teachers(fake, manager_count)
         created_unassigned = self._create_unassigned_users(fake, unassigned_count)
+
+        # Assign house masters
+        self._assign_house_masters()
 
         self.stdout.write(self.style.SUCCESS('Seed completed successfully.'))
         self.stdout.write(f'Subjects ensured: {created_subjects}')
@@ -63,33 +68,36 @@ class Command(BaseCommand):
             Responsibility.objects.get_or_create(title=title, defaults={'description': ''})
 
     def _ensure_subjects_and_courses(self, fake):
+        department_names = [
+            'Science',
+            'Business',
+            'Agriculture',
+            'Home Economics',
+            'Visual Arts',
+            'General Arts',
+        ]
+        created_departments = 0
+        for name in department_names:
+            _, created = Department.objects.get_or_create(name=name)
+            if created:
+                created_departments += 1
+
+        all_deps = list(Department.objects.all())
         subject_names = [
-            'English Language',
-            'Core Mathematics',
-            'Integrated Science',
-            'Social Studies',
-            'Biology',
-            'Chemistry',
-            'Physics',
-            'Economics',
-            'Financial Accounting',
-            'Business Management',
-            'General Agriculture',
-            'Crop Husbandry',
-            'Food and Nutrition',
-            'Management in Living',
-            'Government',
-            'History',
-            'Literature in English',
-            'Graphic Design',
-            'Picture Making',
-            'Sculpture',
+            'English Language', 'Core Mathematics', 'Integrated Science', 'Social Studies',
+            'Biology', 'Chemistry', 'Physics', 'Economics', 'Financial Accounting',
+            'Business Management', 'General Agriculture', 'Crop Husbandry',
+            'Food and Nutrition', 'Management in Living', 'Government', 'History',
+            'Literature in English', 'Graphic Design', 'Picture Making', 'Sculpture',
         ]
         created_subjects = 0
         for name in subject_names:
-            _, created = Subject.objects.get_or_create(name=name)
+            subject, created = Subject.objects.get_or_create(name=name)
             if created:
                 created_subjects += 1
+            if not subject.department:
+                subject.department = random.choice(all_deps)
+                subject.save(update_fields=['department'])
 
         subject_map = {subject.name: subject for subject in Subject.objects.all()}
         programme_blueprints = [
@@ -117,13 +125,19 @@ class Command(BaseCommand):
 
             course.subjects.set([subject_map[name] for name in subject_names_for_course if name in subject_map])
 
-        return created_subjects, created_courses
+        return created_subjects, created_courses, created_departments
 
     def _create_students(self, fake, count, registration_year):
         programmes = [value for value, _ in Programme.choices]
         houses = list(House.objects.all())
         created = 0
         start_index = CustomUser.objects.filter(role="Student").count()
+
+        # Get available profile pictures
+        profile_pics = []
+        pics_dir = os.path.join(settings.MEDIA_ROOT, 'profile_pictures')
+        if os.path.exists(pics_dir):
+            profile_pics = [f'profile_pictures/{f}' for f in os.listdir(pics_dir) if f.endswith(('.jpg', '.png', '.jpeg'))]
 
         for index in range(count):
             email = f'student{start_index + index + 1}@wbmzionshs.test'
@@ -139,14 +153,17 @@ class Command(BaseCommand):
             )
 
             first_name = fake.first_name()
+            middle_name = random.choice([fake.first_name(), ''])
             last_name = fake.last_name()
             user = CustomUser.objects.create_user(
                 email=email,
                 password='StrongPass123!',
                 first_name=first_name,
+                middle_name=middle_name,
                 last_name=last_name,
                 gender=random.choice([choice[0] for choice in CustomUser.Gender.choices]),
                 role=CustomUser.Role.STUDENT,
+                profile_picture=random.choice(profile_pics) if profile_pics else None
             )
 
             Student.objects.create(
@@ -166,29 +183,18 @@ class Command(BaseCommand):
         return created
 
     def _create_teachers(self, fake, count):
-        departments = [
-            'Science',
-            'Business',
-            'Agriculture',
-            'Home Economics',
-            'Visual Arts',
-            'General Arts',
-        ]
-        specialties = [
-            'Biology',
-            'Chemistry',
-            'Physics',
-            'Economics',
-            'Financial Accounting',
-            'Crop Science',
-            'Food and Nutrition',
-            'Graphic Design',
-            'History',
-            'Government',
-        ]
+        departments = list(Department.objects.all())
+        all_subjects = list(Subject.objects.all())
         responsibilities = list(Responsibility.objects.all())
+        house_teacher_responsibility = Responsibility.objects.filter(title='House Teacher').first()
         created = 0
         start_index = CustomUser.objects.filter(role="Teacher").count()
+
+        # Get available profile pictures
+        profile_pics = []
+        pics_dir = os.path.join(settings.MEDIA_ROOT, 'profile_pictures')
+        if os.path.exists(pics_dir):
+            profile_pics = [f'profile_pictures/{f}' for f in os.listdir(pics_dir) if f.endswith(('.jpg', '.png', '.jpeg'))]
 
         for index in range(count):
             email = f'teacher{start_index + index + 1}@wbmzionshs.test'
@@ -196,28 +202,38 @@ class Command(BaseCommand):
                 continue
 
             first_name = fake.first_name()
+            middle_name = random.choice([fake.first_name(), ''])
             last_name = fake.last_name()
             user = CustomUser.objects.create_user(
                 email=email,
                 password='StrongPass123!',
                 first_name=first_name,
+                middle_name=middle_name,
                 last_name=last_name,
                 gender=random.choice([choice[0] for choice in CustomUser.Gender.choices]),
                 role=CustomUser.Role.TEACHER,
+                profile_picture=random.choice(profile_pics) if profile_pics else None
             )
 
             teacher = Teacher.objects.create(
                 user=user,
                 staff_id=f'WBM-TCH-{index + 1:03d}',
-                department=random.choice(departments),
-                subject_specialty=random.choice(specialties),
+                department=random.choice(departments) if departments else None,
+                subject_specialty=random.choice(all_subjects) if all_subjects else None,
                 date_hired=fake.date_between(start_date='-10y', end_date='today'),
                 phone_number=fake.phone_number()[:30],
             )
 
             assigned = random.sample(responsibilities, k=random.randint(0, min(2, len(responsibilities))))
             if assigned:
-                teacher.responsibilities.set(assigned)
+                teacher.responsibility = assigned[0]
+                teacher.save()
+            
+            # Additional logic: make 4 random teachers House Teachers if they don't have a lead role yet
+            if house_teacher_responsibility and not teacher.responsibility and created < 4:
+                teacher.responsibility = house_teacher_responsibility
+                teacher.save()
+            
             created += 1
 
         return created
@@ -232,6 +248,12 @@ class Command(BaseCommand):
         created = 0
         start_index = CustomUser.objects.filter(email__icontains='manager').count()
 
+        # Get available profile pictures
+        profile_pics = []
+        pics_dir = os.path.join(settings.MEDIA_ROOT, 'profile_pictures')
+        if os.path.exists(pics_dir):
+            profile_pics = [f'profile_pictures/{f}' for f in os.listdir(pics_dir) if f.endswith(('.jpg', '.png', '.jpeg'))]
+
         for index, title in enumerate(management_titles[:count], start=1):
             email = f'manager{start_index + index}@wbmzionshs.test'
             if CustomUser.objects.filter(email=email).exists():
@@ -241,20 +263,24 @@ class Command(BaseCommand):
                 email=email,
                 password='StrongPass123!',
                 first_name=fake.first_name(),
+                middle_name=random.choice([fake.first_name(), '']),
                 last_name=fake.last_name(),
                 gender=random.choice([choice[0] for choice in CustomUser.Gender.choices]),
                 role=CustomUser.Role.TEACHER,
+                profile_picture=random.choice(profile_pics) if profile_pics else None
             )
 
+            departments = list(Department.objects.all())
             teacher = Teacher.objects.create(
                 user=user,
                 staff_id=f'WBM-MGT-{index:03d}',
-                department=random.choice([value for value, _ in Programme.choices]),
-                subject_specialty=fake.random_element(elements=['Leadership', 'Academics', 'Administration', 'Pastoral Care']),
+                department=random.choice(departments) if departments else None,
+                subject_specialty=random.choice(all_subjects) if all_subjects else None,
                 date_hired=fake.date_between(start_date='-12y', end_date='today'),
                 phone_number=fake.phone_number()[:30],
             )
-            teacher.responsibilities.add(Responsibility.objects.get(title=title))
+            teacher.responsibility = Responsibility.objects.get(title=title)
+            teacher.save()
             created += 1
 
         return created
@@ -279,3 +305,15 @@ class Command(BaseCommand):
             created += 1
 
         return created
+
+    def _assign_house_masters(self):
+        from teachers.models import Responsibility
+        houses = House.objects.all()
+        house_teachers = list(Teacher.objects.filter(responsibility__title='House Teacher'))
+        
+        if house_teachers:
+            for i, house in enumerate(houses):
+                if i < len(house_teachers):
+                    house.house_teacher = house_teachers[i]
+                    house.save()
+                    self.stdout.write(f'Assigned {house_teachers[i].user.get_full_name()} as head of {house.name}')

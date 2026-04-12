@@ -186,5 +186,54 @@
 
 
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileInputs = document.querySelectorAll('input[type="file"][name="profile_picture"]');
+            
+            profileInputs.forEach(input => {
+                const fieldGroup = input.closest('.form-field-group');
+                if (!fieldGroup) return;
+
+                const setupBtn = (shell) => {
+                    const closeBtn = shell.querySelector('.image-preview-close');
+                    if (closeBtn) {
+                        closeBtn.addEventListener('click', function() {
+                            input.value = '';
+                            shell.classList.remove('active');
+                        });
+                    }
+                };
+
+                // Handle existing previews
+                const existingShell = fieldGroup.querySelector('.image-preview-shell');
+                if (existingShell) setupBtn(existingShell);
+
+                input.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        let previewShell = fieldGroup.querySelector('.image-preview-shell');
+                        let previewImg = fieldGroup.querySelector('.image-preview-img');
+                        
+                        if (!previewShell) {
+                            previewShell = document.createElement('div');
+                            previewShell.className = 'image-preview-shell';
+                            previewShell.innerHTML = '<img class="image-preview-img"><div class="image-preview-close">✕</div>';
+                            fieldGroup.prepend(previewShell); setupBtn(previewShell);
+                            previewImg = previewShell.querySelector('.image-preview-img');
+                        }
+                        
+                        reader.onload = function(e) {
+                            previewImg.src = e.target.result;
+                            previewShell.classList.add('active');
+                        }
+                        
+                        reader.readAsDataURL(file);
+                    setupBtn(previewShell);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

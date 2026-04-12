@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}My Profile | WBM Zion Senior High School{% endblock %}
 
@@ -13,21 +14,22 @@
 <section class="section">
     <div class="container">
         <div class="profile-shell">
-            <div class="info-card profile-card profile-card-modern">
-                <div class="profile-header">
-                    <div class="profile-avatar profile-avatar-shell">
+            <div class="db-panel shadow-md">
+                <div class="profile-header text-white" style="background: linear-gradient(135deg, #882471 0%, #4f46e5 100%); padding: 2rem; border-radius: 1.25rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+                    <div class="profile-avatar profile-avatar-shell" style="border: 4px solid rgba(255,255,255,0.2); width: 80px; height: 80px; overflow: hidden; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                         {% if user.profile_picture %}
-                            <img src="{{ user.profile_picture.url }}" alt="{{ user.first_name }}" class="profile-avatar-img">
+                        <img src="{{ user.profile_picture.url }}" alt="{{ user.first_name }}"
+                            class="profile-avatar-img" style="border-radius: 50%; max-width: 80px;">
                         {% else %}
-                            <div class="profile-avatar-fallback">
-                                <svg class="fa-icon" style="width: 40px; height: 40px;"><use href="#fa-user"></use></svg>
-                            </div>
+                        <div class="profile-avatar-fallback d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background: white; border-radius: 50%; border: 4px solid rgba(255,255,255,0.2); overflow: hidden;">
+                            <img src="{% static 'images/wbm-logo-purple.png' %}" alt="WBM Zion SHS" style="width: 100%; height: 100%; object-fit: contain; padding: 10px;">
+                        </div>
                         {% endif %}
                     </div>
                     <div class="profile-identity">
-                        <span class="dashboard-section-tag">Account Overview</span>
-                        <h1 class="h3 mb-2">{{ user.first_name }} {{ user.last_name }}</h1>
-                        <p class="profile-subtitle">{{ user.email }}</p>
+                        <span class="db-tag db-tag-purple mb-2 bg-white" style="color: #882471;">Account Overview</span>
+                        <h1 class="h3 mb-1 text-white">{{ user.first_name }} {{ user.last_name }}</h1>
+                        <p class="profile-subtitle mb-0 text-white-50">{{ user.email }}</p>
                     </div>
                     <div class="profile-badge-wrap">
                         <span class="dashboard-role-badge">{{ user.role|title }}</span>
@@ -55,6 +57,18 @@
 
                 <div class="profile-grid">
                     <div class="profile-item">
+                        <span class="profile-label">First Name</span>
+                        <div class="fw-bold">{{ user.first_name }}</div>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Middle Name</span>
+                        <div class="fw-bold">{{ user.middle_name|default:"Not provided" }}</div>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Last Name</span>
+                        <div class="fw-bold">{{ user.last_name }}</div>
+                    </div>
+                    <div class="profile-item">
                         <span class="profile-label">Email Address</span>
                         <div class="fw-bold">{{ user.email }}</div>
                     </div>
@@ -64,57 +78,59 @@
                     </div>
 
                     {% if student_profile %}
-                        <div class="profile-item">
-                            <span class="profile-label">Admission Number</span>
-                            <div class="fw-bold">{{ student_profile.admission_number }}</div>
-                        </div>
-                        <div class="profile-item">
-                            <span class="profile-label">Programme</span>
-                            <div class="fw-bold">{{ student_profile.programme|default:"Not assigned" }}</div>
-                        </div>
-                        <div class="profile-item">
-                            <span class="profile-label">Class</span>
-                            <div class="fw-bold">{{ student_profile.school_class|default:"Not assigned" }}</div>
-                        </div>
-                        <div class="profile-item">
-                            <span class="profile-label">House</span>
-                            <div class="fw-bold">{% if student_profile.house %}{{ student_profile.house.name }}{% else %}Not assigned{% endif %}</div>
-                        </div>
-                        <div class="profile-item">
-                            <span class="profile-label">Guardian</span>
-                            <div class="fw-bold">{{ student_profile.guardian_name|default:"Not provided" }}</div>
-                        </div>
-                        <div class="profile-item">
-                            <span class="profile-label">Date Admitted</span>
-                            <div class="fw-bold">{% if student_profile.date_admitted %}{{ student_profile.date_admitted|date:"F j, Y" }}{% else %}Not provided{% endif %}</div>
-                        </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Admission Number</span>
+                        <div class="fw-bold">{{ student_profile.admission_number }}</div>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Programme</span>
+                        <div class="fw-bold">{{ student_profile.programme|default:"Not assigned" }}</div>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Class</span>
+                        <div class="fw-bold">{{ student_profile.school_class|default:"Not assigned" }}</div>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">House</span>
+                        <div class="fw-bold">{% if student_profile.house %}{{ student_profile.house.name }}{% else %}Not
+                            assigned{% endif %}</div>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Guardian</span>
+                        <div class="fw-bold">{{ student_profile.guardian_name|default:"Not provided" }}</div>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Date Admitted</span>
+                        <div class="fw-bold">{% if student_profile.date_admitted %}{{
+                            student_profile.date_admitted|date:"F j, Y" }}{% else %}Not provided{% endif %}</div>
+                    </div>
                     {% endif %}
 
                     {% if teacher_profile %}
-                        <div class="profile-item">
-                            <span class="profile-label">Staff ID</span>
-                            <div class="fw-bold">{{ teacher_profile.staff_id }}</div>
-                        </div>
-                        <div class="profile-item">
-                            <span class="profile-label">Department</span>
-                            <div class="fw-bold">{{ teacher_profile.department|default:"Not assigned" }}</div>
-                        </div>
-                        <div class="profile-item">
-                            <span class="profile-label">Subject Specialty</span>
-                            <div class="fw-bold">{{ teacher_profile.subject_specialty|default:"Not assigned" }}</div>
-                        </div>
-                        <div class="profile-item">
-                            <span class="profile-label">Phone Number</span>
-                            <div class="fw-bold">{{ teacher_profile.phone_number|default:"Not provided" }}</div>
-                        </div>
-                        <div class="profile-item">
-                            <span class="profile-label">Date Hired</span>
-                            <div class="fw-bold">{% if teacher_profile.date_hired %}{{ teacher_profile.date_hired|date:"F j, Y" }}{% else %}Not provided{% endif %}</div>
-                        </div>
-                        <div class="profile-item">
-                            <span class="profile-label">Total Responsibilities</span>
-                            <div class="fw-bold">{{ teacher_profile.responsibilities.count }}</div>
-                        </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Staff ID</span>
+                        <div class="fw-bold">{{ teacher_profile.staff_id }}</div>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Department</span>
+                        <div class="fw-bold">{{ teacher_profile.department|default:"Not assigned" }}</div>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Subject Specialty</span>
+                        <div class="fw-bold">{{ teacher_profile.subject_specialty|default:"Not assigned" }}</div>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Phone Number</span>
+                        <div class="fw-bold">{{ teacher_profile.phone_number|default:"Not provided" }}</div>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Date Hired</span>
+                        <div class="fw-bold">{% if teacher_profile.date_hired %}{{ teacher_profile.date_hired|date:"F j, Y" }}{% else %}Not provided{% endif %}</div>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Responsibility</span>
+                        <div class="fw-bold">{{ teacher_profile.responsibility.title|default:"None" }}</div>
+                    </div>
                     {% endif %}
 
                     <div class="profile-item">
@@ -122,30 +138,9 @@
                         <div class="fw-bold">{{ user.date_joined|date:"F j, Y" }}</div>
                     </div>
                 </div>
-
-                <div class="profile-highlights">
-                    {% for highlight in profile_highlights %}
-                        <div class="profile-highlight-pill">
-                            <svg class="fa-icon" style="width:12px; height:12px;"><use href="#fa-star"></use></svg>
-                            {{ highlight }}
-                        </div>
-                    {% endfor %}
-                </div>
-
-                {% if teacher_profile and teacher_profile.responsibilities.all %}
-                    <div class="mt-5">
-                        <div class="section-heading mb-4">
-                            <h2 class="h5">Assigned Responsibilities</h2>
-                        </div>
-                        <div class="dashboard-chip-list">
-                            {% for responsibility in teacher_profile.responsibilities.all %}
-                                <span class="dashboard-chip">{{ responsibility.title }}</span>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
             </div>
         </div>
+    </div>
     </div>
 </section>
 {% endblock %}

@@ -19,7 +19,12 @@
                     <h2 class="h4 mb-0">Class Records</h2>
                     <p class="manager-list-meta">Track streams, registration years, and enrolment counts clearly.</p>
                 </div>
-                <span class="manager-list-pill">{{ classes|length }} Total</span>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="manager-list-pill">{{ classes|length }} Total</span>
+                    {% if can_manage_classes %}
+                        <a href="{% url 'class_create' %}" class="btn btn-sm btn-primary">Add Class</a>
+                    {% endif %}
+                </div>
             </div>
 
             <div class="manager-kpi-grid">
@@ -78,7 +83,12 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="{% url 'student_list' %}?school_class={{ school_class.pk }}" class="btn btn-sm btn-outline-primary manager-table-action">View Students</a>
+                                    <div class="d-flex gap-2">
+                                        <a href="{% url 'student_list' %}?school_class={{ school_class.pk }}" class="btn btn-sm btn-outline-primary manager-table-action">View Students</a>
+                                        {% if can_manage_classes %}
+                                            <a href="{% url 'class_edit' school_class.pk %}" class="btn btn-sm btn-outline-secondary manager-table-action">Edit</a>
+                                        {% endif %}
+                                    </div>
                                 </td>
                             </tr>
                         {% empty %}

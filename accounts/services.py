@@ -8,11 +8,12 @@ def generate_temporary_password(length=12):
     return get_random_string(length, allowed_chars)
 
 
-def create_managed_user(*, email, first_name, last_name, gender='', profile_picture=None, role=''):
+def create_managed_user(*, email, first_name, last_name, middle_name='', gender='', profile_picture=None, role=''):
     temporary_password = generate_temporary_password()
     user = CustomUser(
         email=email,
         first_name=first_name,
+        middle_name=middle_name,
         last_name=last_name,
         gender=gender,
         role=role,

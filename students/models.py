@@ -15,6 +15,13 @@ class House(models.Model):
     name = models.CharField(max_length=100, unique=True)
     color = models.CharField(max_length=7, default='#6c757d')
     description = models.TextField(blank=True)
+    house_teacher = models.ForeignKey(
+        'teachers.Teacher',
+        on_delete=models.SET_NULL,
+        related_name='headed_house',
+        null=True,
+        blank=True,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -23,6 +30,15 @@ class House(models.Model):
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.house_teacher and (not self.house_teacher.responsibility or self.house_teacher.responsibility.title != 'House Teacher'):
+            raise ValidationError({'house_teacher': 'Only teachers with "House Teacher" responsibility can be assigned as house heads.'})
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
 
 class SchoolClass(models.Model):

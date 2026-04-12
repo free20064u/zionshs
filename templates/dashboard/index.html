@@ -5,131 +5,142 @@
 {% block title %}Dashboard | WBM Zion Senior High School{% endblock %}
 
 {% block content %}
-<section class="page-banner dashboard-banner">
+
+{# ── Dashboard Hero Banner ───────────────────────────── #}
+<section class="db-hero">
     <div class="container">
-        <span class="eyebrow">Dashboard</span>
-        <h1>Statistics Overview</h1>
+        <div class="db-hero-inner">
+            <div class="db-hero-copy">
+                <span class="db-hero-kicker">
+                    <svg class="fa-icon" style="width:13px;height:13px;" aria-hidden="true"><use href="#fa-shield-check"></use></svg>
+                    Secure Dashboard
+                </span>
+                <h1 class="db-hero-title">
+                    Welcome back,
+                    <span class="db-hero-name">{{ user.first_name|default:user.email }}</span> 👋
+                </h1>
+                <p class="db-hero-sub">Here's your personalised overview for WBM Zion SHS.</p>
+            </div>
+            <div class="db-hero-meta">
+                <div class="db-meta-pill">
+                    <svg class="fa-icon" style="width:14px;height:14px;" aria-hidden="true"><use href="#fa-user"></use></svg>
+                    {{ user.role|title }}
+                </div>
+                <div class="db-meta-pill">
+                    <svg class="fa-icon" style="width:14px;height:14px;" aria-hidden="true"><use href="#fa-graduation-cap"></use></svg>
+                    WBM Zion SHS
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
-<section class="section">
+{# ── Stats Panels ─────────────────────────────────────── #}
+<section class="db-section">
     <div class="container">
-        <div class="dashboard-showcase">
+        <div class="db-showcase">
+
+            {# Student Stats #}
             {% if dashboard_kind == 'student' %}
-                <section class="dashboard-panel-modern">
-                    <div class="dashboard-panel-header">
-                        <div>
-                            <span class="dashboard-section-tag">Student Statistics</span>
-                            <h2 class="h4 mb-1">My Statistics</h2>
+            <div class="db-panel">
+                <div class="db-panel-header">
+                    <span class="db-tag db-tag-purple">
+                        <svg class="fa-icon" style="width:11px;height:11px;" aria-hidden="true"><use href="#fa-graduation-cap"></use></svg>
+                        Student Statistics
+                    </span>
+                    <h2 class="db-panel-title">My Academic Profile</h2>
+                </div>
+                <div class="db-card-grid">
+                    <div class="db-card db-card-1">
+                        <div class="db-card-icon">
+                            <svg class="fa-icon" style="width:22px;height:22px;"><use href="#fa-graduation-cap"></use></svg>
                         </div>
+                        <div class="db-card-value">{{ student_profile.programme|default:'Pending' }}</div>
+                        <div class="db-card-label">Programme</div>
+                        <div class="db-card-shine"></div>
                     </div>
-                    <div class="dashboard-metric-grid">
-                        <div class="dashboard-metric-card">
-                            <div class="dashboard-metric-icon">
-                                <svg class="fa-icon" style="width:22px; height:22px;"><use href="#fa-graduation-cap"></use></svg>
-                            </div>
-                            <div class="dashboard-metric-value">{{ student_profile.programme|default:'Pending' }}</div>
-                            <div class="dashboard-metric-label">Programme</div>
+                    <div class="db-card db-card-2">
+                        <div class="db-card-icon">
+                            <svg class="fa-icon" style="width:22px;height:22px;"><use href="#fa-book-open"></use></svg>
                         </div>
-                        <div class="dashboard-metric-card">
-                            <div class="dashboard-metric-icon">
-                                <svg class="fa-icon" style="width:22px; height:22px;"><use href="#fa-book-open"></use></svg>
-                            </div>
-                            <div class="dashboard-metric-value">{{ student_profile.school_class|default:'Pending' }}</div>
-                            <div class="dashboard-metric-label">Current Class</div>
-                        </div>
-                        <div class="dashboard-metric-card">
-                            <div class="dashboard-metric-icon">
-                                <svg class="fa-icon" style="width:22px; height:22px;"><use href="#fa-users"></use></svg>
-                            </div>
-                            <div class="dashboard-metric-value">{{ student_profile.admission_number|default:'N/A' }}</div>
-                            <div class="dashboard-metric-label">Admission Number</div>
-                        </div>
-                        <div class="dashboard-metric-card">
-                            <div class="dashboard-metric-icon">
-                                <svg class="fa-icon" style="width:22px; height:22px;"><use href="#fa-trophy"></use></svg>
-                            </div>
-                            <div class="dashboard-metric-value">{% if student_profile.house %}{{ student_profile.house.name }}{% else %}N/A{% endif %}</div>
-                            <div class="dashboard-metric-label">House</div>
-                        </div>
+                        <div class="db-card-value">{{ student_profile.school_class|default:'Pending' }}</div>
+                        <div class="db-card-label">Current Class</div>
+                        <div class="db-card-shine"></div>
                     </div>
-                </section>
+                    <div class="db-card db-card-3">
+                        <div class="db-card-icon">
+                            <svg class="fa-icon" style="width:22px;height:22px;"><use href="#fa-users"></use></svg>
+                        </div>
+                        <div class="db-card-value">{{ student_profile.admission_number|default:'N/A' }}</div>
+                        <div class="db-card-label">Admission No.</div>
+                        <div class="db-card-shine"></div>
+                    </div>
+                    <div class="db-card db-card-4">
+                        <div class="db-card-icon">
+                            <svg class="fa-icon" style="width:22px;height:22px;"><use href="#fa-trophy"></use></svg>
+                        </div>
+                        <div class="db-card-value">{% if student_profile.house %}{{ student_profile.house.name }}{% else %}N/A{% endif %}</div>
+                        <div class="db-card-label">House</div>
+                        <div class="db-card-shine"></div>
+                    </div>
+                </div>
+            </div>
             {% endif %}
 
+            {# Form Teacher #}
             {% if dashboard_kind == 'teacher' and is_form_teacher and assigned_form_classes %}
-                <section class="dashboard-panel-modern">
-                    <div class="dashboard-panel-header">
-                        <div>
-                            <span class="dashboard-section-tag">Form Teacher</span>
-                            <h2 class="h4 mb-1">Assigned Classes</h2>
+            <div class="db-panel">
+                <div class="db-panel-header">
+                    <span class="db-tag db-tag-green">
+                        <svg class="fa-icon" style="width:11px;height:11px;" aria-hidden="true"><use href="#fa-book-open"></use></svg>
+                        Form Teacher
+                    </span>
+                    <h2 class="db-panel-title">Assigned Classes</h2>
+                </div>
+                <div class="db-card-grid">
+                    {% for school_class in assigned_form_classes %}
+                    <a href="{% url 'class_list' %}" class="db-card db-card-{{ forloop.counter }} text-decoration-none">
+                        <div class="db-card-icon">
+                            <svg class="fa-icon" style="width:22px;height:22px;"><use href="#fa-book-open"></use></svg>
                         </div>
+                        <div class="db-card-value">{{ school_class.name }}</div>
+                        <div class="db-card-label">{{ school_class.student_count }} Students</div>
+                        <div class="db-card-shine"></div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {# Responsibility Panels #}
+            {% if responsibility_panels %}
+                {% for panel in responsibility_panels %}
+                <div class="db-panel">
+                    <div class="db-panel-header">
+                        <span class="db-tag db-tag-amber">
+                            <svg class="fa-icon" style="width:11px;height:11px;" aria-hidden="true"><use href="#fa-shield-check"></use></svg>
+                            Responsibility
+                        </span>
+                        <h2 class="db-panel-title">{{ panel.title }}</h2>
                     </div>
-                    <div class="dashboard-metric-grid">
-                        {% for school_class in assigned_form_classes %}
-                            <a href="{% url 'class_list' %}" class="dashboard-metric-card text-decoration-none">
-                                <div>
-                                    <span class="dashboard-metric-icon">
-                                        <svg class="fa-icon" style="width:22px; height:22px;"><use href="#fa-book-open"></use></svg>
-                                    </span>
-                                    <span class="dashboard-metric-value">{{ school_class.name }}</span>
-                                </div>
-                                <div class="dashboard-metric-label">{{ school_class.student_count }} Students</div>
-                            </a>
+                    <div class="db-card-grid">
+                        {% for stat in panel.stats %}
+                        <{% if stat.url %}a href="{{ stat.url }}"{% else %}div{% endif %} class="db-card db-card-{{ forloop.counter }} text-decoration-none">
+                            <div class="db-card-icon">
+                                <svg class="fa-icon" style="width:22px;height:22px;"><use href="#{{ stat.icon }}"></use></svg>
+                            </div>
+                            <div class="db-card-value">{{ stat.value }}</div>
+                            <div class="db-card-label">{{ stat.label }}</div>
+                            <div class="db-card-shine"></div>
+                        </{% if stat.url %}a{% else %}div{% endif %}>
                         {% endfor %}
                     </div>
-                </section>
+                </div>
+                {% endfor %}
             {% endif %}
 
-            {% if responsibility_panels %}
-                <div class="dashboard-panel-stack">
-                    {% for panel in responsibility_panels %}
-                        <section class="dashboard-panel-modern">
-                            <div class="dashboard-panel-header">
-                                <div>
-                                    <span class="dashboard-section-tag">Responsibility Statistics</span>
-                                    <h2 class="h4 mb-1">{{ panel.title }}</h2>
-                                </div>
-                            </div>
-                            <div class="dashboard-metric-grid">
-                                {% for stat in panel.stats %}
-                                    <{% if stat.url %}a href="{{ stat.url }}"{% else %}div{% endif %} class="dashboard-metric-card text-decoration-none">
-                                        <div>
-                                            <span class="dashboard-metric-icon">
-                                            <svg class="fa-icon" style="width:22px; height:22px;"><use href="#{{ stat.icon }}"></use></svg>
-                                            </span>
-                                            <span class="dashboard-metric-value">{{ stat.value }}</span>
-                                        </div>
-                                        <div class="dashboard-metric-label">{{ stat.label }}</div>
-                                    </{% if stat.url %}a{% else %}div{% endif %}>
-                                {% endfor %}
-                            </div>
-                        </section>
-                    {% endfor %}
-                </div>
-            {% endif %}
 
-            <section class="dashboard-panel-modern">
-                <div class="dashboard-panel-header">
-                    <div>
-                        <span class="dashboard-section-tag">School Statistics</span>
-                        <h2 class="h4 mb-1">School-wide Overview</h2>
-                    </div>
-                </div>
-                <div class="dashboard-metric-grid">
-                    {% for stat in display_school_stats %}
-                        <{% if stat.url %}a href="{{ stat.url }}"{% else %}div{% endif %} class="dashboard-metric-card dashboard-metric-card-school text-decoration-none">
-                            <div>
-                                <span class="dashboard-metric-icon">
-                                <svg class="fa-icon" style="width:22px; height:22px;"><use href="#{{ stat.icon }}"></use></svg>
-                                </span>
-                                <span class="dashboard-metric-value">{{ stat.value }}</span>
-                            </div>
-                            <div class="dashboard-metric-label">{{ stat.label }}</div>
-                        </{% if stat.url %}a{% else %}div{% endif %}>
-                    {% endfor %}
-                </div>
-            </section>
-        </div>
+        </div>{# /db-showcase #}
     </div>
 </section>
 {% endblock %}

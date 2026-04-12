@@ -46,6 +46,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=150)
+    middle_name = models.CharField(max_length=150, blank=True, default='')
     last_name = models.CharField(max_length=150)
     gender = models.CharField(max_length=10, choices=Gender.choices, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
@@ -66,8 +67,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.email
 
     def get_full_name(self):
-        """Returns the first_name plus the last_name, with a space in between."""
-        return f"{self.first_name} {self.last_name}".strip()
+        """Returns the first_name, middle_name (if present), and last_name."""
+        names = [self.first_name, self.middle_name, self.last_name]
+        return " ".join([name for name in names if name]).strip()
 
     def get_short_name(self):
         """Returns the short name for the user."""

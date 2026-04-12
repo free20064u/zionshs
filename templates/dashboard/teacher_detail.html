@@ -49,11 +49,11 @@
                     
                     <h3>Management Roles</h3>
                     <div class="dashboard-chip-list">
-                        {% for responsibility in teacher.responsibilities.all %}
-                            <span class="dashboard-chip">{{ responsibility.title }}</span>
-                        {% empty %}
+                        {% if teacher.responsibility %}
+                            <span class="dashboard-chip">{{ teacher.responsibility.title }}</span>
+                        {% else %}
                             <span class="text-muted">No specific administrative responsibilities.</span>
-                        {% endfor %}
+                        {% endif %}
                     </div>
 
                     <div class="mt-4">
@@ -74,6 +74,17 @@
                                 <span class="dashboard-chip">{{ school_class.name }}</span>
                             {% empty %}
                                 <span class="text-muted">No teaching classes assigned.</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h3>Form Classes</h3>
+                        <div class="dashboard-chip-list">
+                            {% for school_class in teacher.form_classes.all %}
+                                <span class="dashboard-chip text-white bg-primary">{{ school_class.name }}</span>
+                            {% empty %}
+                                <span class="text-muted">Not assigned as form teacher to any class.</span>
                             {% endfor %}
                         </div>
                     </div>

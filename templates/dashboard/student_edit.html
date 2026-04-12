@@ -24,20 +24,58 @@
 
             <form method="post" enctype="multipart/form-data" novalidate class="modern-form">
                 {% csrf_token %}
-                <div class="row g-4">
-                    {% for field in form %}
-                        <div class="col-md-6">
-                            <div class="form-field-group">
+                
+                <!-- Form Header: Stats & Identity -->
+                <div class="row g-4 align-items-end mb-4 border-bottom pb-4">
+                    <div class="col-md-auto">
+                        <div class="form-field-group mb-0">
+                            {% with field=form.profile_picture %}
+                                {% if student.user.profile_picture %}
+                                    <div class="image-preview-shell active mb-3">
+                                        <img src="{{ student.user.profile_picture.url }}" class="image-preview-img">
+                                        <div class="image-preview-close">✕</div>
+                                    </div>
+                                {% endif %}
+                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                                {% for error in field.errors %}
+                                    <div class="form-feedback text-danger">{{ error }}</div>
+                                {% endfor %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                    <div class="col-md">
+                        <div class="form-field-group mb-0">
+                            {% with field=form.email %}
                                 <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                                 {{ field }}
                                 {% if field.help_text %}
                                     <small class="form-help">{{ field.help_text }}</small>
                                 {% endif %}
                                 {% for error in field.errors %}
-                                    <div class="form-feedback text-danger bg-danger-subtle border border-danger-subtle">{{ error }}</div>
+                                    <div class="form-feedback text-danger">{{ error }}</div>
                                 {% endfor %}
-                            </div>
+                            {% endwith %}
                         </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    {% for field in form %}
+                        {% if field.name != 'profile_picture' and field.name != 'email' %}
+                            <div class="col-md-6">
+                                <div class="form-field-group">
+                                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <small class="form-help">{{ field.help_text }}</small>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                        <div class="form-feedback text-danger bg-danger-subtle border border-danger-subtle">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
 

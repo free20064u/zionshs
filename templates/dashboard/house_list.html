@@ -40,6 +40,7 @@
                         <tr>
                             <th>House Name</th>
                             <th>Color</th>
+                            <th>House Master</th>
                             <th>Description</th>
                             <th>Students</th>
                             <th class="text-end">Action</th>
@@ -51,10 +52,11 @@
                                 <td class="manager-record-title">
                                     {{ house.name }}</td>
                                 <td>
-                                    <div class="manager-badge-soft" style="background-color: {{ house.color }}; color:{{house.color}}oisd; border-color: {{ house.color }};">
-                                        ...
+                                    <div class="manager-badge-soft" style="background-color: {{ house.color }}; border-color: {{ house.color }};">
+                                        &nbsp;
                                     </div>
                                 </td>
+                                <td class="manager-record-subtle">{{ house.house_teacher.user.get_full_name|default:"Not assigned" }}</td>
                                 <td class="manager-record-subtle">{{ house.description|default:"No description" }}</td>
                                 <td><span class="manager-badge-soft">{{ house.students.count }}</span></td>
                                 <td class="text-end">

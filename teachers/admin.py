@@ -14,7 +14,7 @@ class ResponsibilityAdmin(admin.ModelAdmin):
 class TeacherAdmin(admin.ModelAdmin):
     form = TeacherAdminForm
     list_display = ('staff_id', 'teacher_name', 'email', 'department', 'house', 'subject_specialty', 'date_hired')
-    list_filter = ('department', 'house', 'date_hired', 'responsibilities')
+    list_filter = ('department', 'house', 'date_hired', 'responsibility')
     search_fields = (
         'staff_id',
         'user__email',
@@ -30,7 +30,7 @@ class TeacherAdmin(admin.ModelAdmin):
             ('Login Account', {'fields': ('email', 'first_name', 'last_name', 'gender', 'profile_picture')}),
             ('Teacher Account', {'fields': ('staff_id', 'department', 'subject_specialty', 'house')}),
             ('Teaching Assignments', {'fields': ('subjects_taught', 'classes_taught')}),
-            ('Employment Details', {'fields': ('date_hired', 'phone_number', 'responsibilities')}),
+            ('Employment Details', {'fields': ('date_hired', 'phone_number', 'responsibility')}),
         )
 
     def save_model(self, request, obj, form, change):

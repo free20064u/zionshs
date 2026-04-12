@@ -35,18 +35,24 @@ class Teacher(models.Model):
         limit_choices_to={'role': 'Teacher'},
     )
     staff_id = models.CharField(max_length=30, unique=True)
-    department = models.CharField(max_length=100)
-    subject_specialty = models.CharField(max_length=120, blank=True)
+    department = models.ForeignKey('school.Department', on_delete=models.SET_NULL, null=True, blank=True, related_name='teachers')
+    subject_specialty = models.ForeignKey(
+        'school.Subject',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='specialized_teachers'
+    )
     house = models.ForeignKey(
         'students.House',
         on_delete=models.SET_NULL,
-        related_name='house_teachers',
+        related_name='affiliated_teachers',
         null=True,
         blank=True,
     )
     date_hired = models.DateField(blank=True, null=True)
     phone_number = models.CharField(max_length=30, blank=True)
-    responsibilities = models.ManyToManyField(Responsibility, blank=True, related_name='teachers')
+    responsibility = models.ForeignKey(Responsibility, on_delete=models.SET_NULL, null=True, blank=True, related_name='teachers')
     subjects_taught = models.ManyToManyField('school.Subject', blank=True, related_name='teachers')
     classes_taught = models.ManyToManyField('students.SchoolClass', blank=True, related_name='subject_teachers')
     created_at = models.DateTimeField(auto_now_add=True)

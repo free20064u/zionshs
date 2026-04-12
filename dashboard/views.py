@@ -4,10 +4,10 @@ from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from school.forms import ProgrammeForm
-from school.models import Programme as CourseProgramme
+from school.forms import ProgrammeForm, DepartmentForm
+from school.models import Programme as CourseProgramme, Department
 from school.models import Subject
-from students.forms import HouseForm, StudentAdminForm
+from students.forms import HouseForm, StudentAdminForm, SchoolClassForm
 from students.models import House, Programme, SchoolClass, Student
 from teachers.forms import ResponsibilityForm, TeacherAdminForm
 from teachers.models import Responsibility
@@ -22,6 +22,11 @@ TOP_MANAGEMENT_ROLES = [
 ]
 TEACHER_MANAGEMENT_ROLES = [
     'Headteacher',
+    'Assistant Headteacher Administration',
+]
+CLASS_MANAGEMENT_ROLES = [
+    'Headteacher',
+    'Assistant Headteacher Academic',
     'Assistant Headteacher Administration',
 ]
 HOUSE_MANAGEMENT_ROLES = [
@@ -39,10 +44,8 @@ def _management_titles(user):
         titles.add(user.role)
 
     teacher_profile = getattr(user, 'teacher_profile', None)
-    if teacher_profile:
-        titles.update(
-            teacher_profile.responsibilities.values_list('title', flat=True)
-        )
+    if teacher_profile and teacher_profile.responsibility:
+        titles.add(teacher_profile.responsibility.title)
 
     return titles
 
@@ -57,6 +60,12 @@ def can_manage_teachers(user):
     if not user.is_authenticated:
         return False
     return user.is_superuser or any(title in TEACHER_MANAGEMENT_ROLES for title in _management_titles(user))
+
+
+def can_manage_classes(user):
+    if not user.is_authenticated:
+        return False
+    return user.is_superuser or any(title in CLASS_MANAGEMENT_ROLES for title in _management_titles(user))
 
 
 def can_manage_houses(user):
@@ -109,6 +118,7 @@ def dashboard_view(request):
         'house_total': House.objects.count(),
         'course_total': CourseProgramme.objects.count(),
         'subject_total': Subject.objects.count(),
+        'department_total': Department.objects.count(),
         'responsibility_total': Responsibility.objects.count(),
         'assigned_student_total': Student.objects.exclude(school_class__isnull=True).count(),
         'unassigned_student_total': Student.objects.filter(school_class__isnull=True).count(),
@@ -142,8 +152,8 @@ def dashboard_view(request):
     department_student_total = 0
     department_class_total = 0
     if teacher_profile and teacher_profile.department:
-        department_name = teacher_profile.department
-        department_teacher_total = Teacher.objects.filter(department=department_name).count()
+        department_name = teacher_profile.department.name
+        department_teacher_total = Teacher.objects.filter(department=teacher_profile.department).count()
         if department_name in dict(Programme.choices):
             department_student_total = Student.objects.filter(programme=department_name).count()
             department_class_total = SchoolClass.objects.filter(programme=department_name).count()
@@ -165,6 +175,7 @@ def dashboard_view(request):
                 {'label': 'Houses', 'value': school_stats['house_total'], 'url': reverse('house_list'), 'icon': 'fa-trophy'},
                 {'label': 'Courses', 'value': school_stats['course_total'], 'url': reverse('course_list'), 'icon': 'fa-book-open'},
                 {'label': 'Subjects', 'value': school_stats['subject_total'], 'url': reverse('subject_list'), 'icon': 'fa-star'},
+                {'label': 'Departments', 'value': school_stats['department_total'], 'url': reverse('department_list'), 'icon': 'fa-building'},
                 {'label': 'Responsibilities', 'value': school_stats['responsibility_total'], 'url': reverse('responsibility_list'), 'icon': 'fa-shield-check'},
             ],
         },
@@ -188,6 +199,7 @@ def dashboard_view(request):
                 {'label': 'School Classes', 'value': school_stats['class_total'], 'url': reverse('class_list'), 'icon': 'fa-book-open'},
                 {'label': 'Courses', 'value': school_stats['course_total'], 'url': reverse('course_list'), 'icon': 'fa-book-open'},
                 {'label': 'Subjects', 'value': school_stats['subject_total'], 'url': reverse('subject_list'), 'icon': 'fa-star'},
+                {'label': 'Departments', 'value': school_stats['department_total'], 'url': reverse('department_list'), 'icon': 'fa-building'},
                 {'label': 'Responsibilities', 'value': school_stats['responsibility_total'], 'url': reverse('responsibility_list'), 'icon': 'fa-shield-check'},
             ],
         },
@@ -197,19 +209,19 @@ def dashboard_view(request):
                 {
                     'label': 'Department Teachers',
                     'value': department_teacher_total,
-                    'url': f"{reverse('teacher_list')}?department={teacher_profile.department}" if teacher_profile and teacher_profile.department else '',
+                    'url': f"{reverse('teacher_list')}?department={teacher_profile.department.pk}" if teacher_profile and teacher_profile.department else '',
                     'icon': 'fa-users',
                 },
                 {
                     'label': 'Programme Students',
                     'value': department_student_total,
-                    'url': f"{reverse('student_list')}?programme={teacher_profile.department}" if teacher_profile and teacher_profile.department in dict(Programme.choices) else '',
+                    'url': f"{reverse('student_list')}?programme={teacher_profile.department.name}" if teacher_profile and department_name in dict(Programme.choices) else '',
                     'icon': 'fa-graduation-cap',
                 },
                 {
                     'label': 'Programme Classes',
                     'value': department_class_total,
-                    'url': f"{reverse('class_list')}?programme={teacher_profile.department}" if teacher_profile and teacher_profile.department in dict(Programme.choices) else '',
+                    'url': f"{reverse('class_list')}?programme={teacher_profile.department.name}" if teacher_profile and department_name in dict(Programme.choices) else '',
                     'icon': 'fa-book-open',
                 },
                 {'label': 'Total Subjects', 'value': school_stats['subject_total'], 'url': reverse('subject_list'), 'icon': 'fa-star'},
@@ -230,6 +242,7 @@ def dashboard_view(request):
         {'label': 'Total Houses', 'value': school_stats['house_total'], 'icon': 'fa-trophy', 'url': reverse('house_list')},
         {'label': 'Total Courses', 'value': school_stats['course_total'], 'icon': 'fa-book-open', 'url': reverse('course_list')},
         {'label': 'Total Subjects', 'value': school_stats['subject_total'], 'icon': 'fa-star', 'url': reverse('subject_list')},
+        {'label': 'Total Departments', 'value': school_stats['department_total'], 'icon': 'fa-building', 'url': reverse('department_list')},
     ]
     if is_top_management(user):
         display_school_stats.append(
@@ -307,7 +320,7 @@ def student_list(request):
 @login_required
 @user_passes_test(is_top_management)
 def teacher_list(request):
-    teachers = Teacher.objects.select_related('user').prefetch_related('responsibilities').order_by('staff_id')
+    teachers = Teacher.objects.select_related('user', 'responsibility').order_by('staff_id')
 
     q = request.GET.get('q', '').strip()
     department = request.GET.get('department', '')
@@ -316,12 +329,15 @@ def teacher_list(request):
     if q:
         teachers = teachers.filter(user__first_name__icontains=q)
     if department:
-        teachers = teachers.filter(department=department)
+        try:
+            teachers = teachers.filter(department_id=department)
+        except (ValueError, TypeError):
+            pass
     if specialty:
         teachers = teachers.filter(subject_specialty=specialty)
 
     # Dynamically fetch existing values for filters
-    all_departments = Teacher.objects.exclude(department__in=['', None]).values_list('department', flat=True).distinct().order_by('department')
+    all_departments = Department.objects.all()
     all_specialties = Teacher.objects.exclude(subject_specialty__in=['', None]).values_list('subject_specialty', flat=True).distinct().order_by('subject_specialty')
 
     paginator = Paginator(teachers, 10)
@@ -383,6 +399,7 @@ def class_list(request):
     context = {
         'classes': classes,
         'programme': programme,
+        'can_manage_classes': can_manage_classes(request.user),
         **_page_context(
             'Classes',
             'Manager access to school classes and enrolment counts.'
@@ -391,6 +408,57 @@ def class_list(request):
         ),
     }
     return render(request, 'dashboard/class_list.html', context)
+
+
+@login_required
+@user_passes_test(can_manage_classes)
+def class_create(request):
+    if request.method == 'POST':
+        form = SchoolClassForm(request.POST)
+        if form.is_valid():
+            school_class = form.save()
+            messages.success(request, f'Class {school_class.name} created successfully.')
+            return redirect('class_list')
+    else:
+        form = SchoolClassForm()
+
+    return render(
+        request,
+        'dashboard/class_form.html',
+        {
+            'form': form,
+            'page_heading': 'Add Class',
+            'page_description': 'Create a new class by selecting programme, stream and registration year.',
+            'submit_label': 'Create Class',
+        },
+    )
+
+
+@login_required
+@user_passes_test(can_manage_classes)
+def class_edit(request, pk):
+    school_class = get_object_or_404(SchoolClass, pk=pk)
+
+    if request.method == 'POST':
+        form = SchoolClassForm(request.POST, instance=school_class)
+        if form.is_valid():
+            school_class = form.save()
+            messages.success(request, f'Class {school_class.name} updated successfully.')
+            return redirect('class_list')
+    else:
+        form = SchoolClassForm(instance=school_class)
+
+    return render(
+        request,
+        'dashboard/class_form.html',
+        {
+            'form': form,
+            'school_class': school_class,
+            'page_heading': f'Edit Class: {school_class.name}',
+            'page_description': 'Update class details including form teacher assignment.',
+            'submit_label': 'Save Changes',
+        },
+    )
 
 
 @login_required
@@ -529,13 +597,30 @@ def course_edit(request, pk):
 @login_required
 @user_passes_test(is_top_management)
 def subject_list(request):
-    subjects = Subject.objects.all().order_by('name')
+    subjects = Subject.objects.select_related('department').all().order_by('name')
+    
+    q = request.GET.get('q', '').strip()
+    department_id = request.GET.get('department', '')
+
+    if q:
+        subjects = subjects.filter(name__icontains=q)
+    if department_id:
+        try:
+            subjects = subjects.filter(department_id=department_id)
+        except (ValueError, TypeError):
+            pass
+
+    all_departments = Department.objects.all()
+
     paginator = Paginator(subjects, 10)
     page_number = request.GET.get('page')
     subjects = paginator.get_page(page_number)
 
     context = {
         'subjects': subjects,
+        'q': q,
+        'department_id': department_id,
+        'all_departments': all_departments,
         **_page_context('Subjects', 'Manager access to curriculum subjects from the dashboard.'),
     }
     return render(request, 'dashboard/subject_list.html', context)
@@ -712,5 +797,71 @@ def house_detail(request, pk):
         {
             'house': house,
             'can_manage_houses': can_manage_houses(request.user),
+        },
+    )
+
+
+@login_required
+@user_passes_test(is_top_management)
+def department_list(request):
+    departments = Department.objects.all().order_by('name')
+    paginator = Paginator(departments, 10)
+    page_number = request.GET.get('page')
+    departments = paginator.get_page(page_number)
+
+    context = {
+        'departments': departments,
+        **_page_context('Departments', 'Manager access to school departments and linked subjects.'),
+    }
+    return render(request, 'dashboard/department_list.html', context)
+
+
+@login_required
+@user_passes_test(is_top_management)
+def department_create(request):
+    if request.method == 'POST':
+        form = DepartmentForm(request.POST)
+        if form.is_valid():
+            department = form.save()
+            messages.success(request, f'{department.name} created successfully.')
+            return redirect('department_list')
+    else:
+        form = DepartmentForm()
+
+    return render(
+        request,
+        'dashboard/department_form.html',
+        {
+            'form': form,
+            'page_heading': 'Add Department',
+            'page_description': 'Create a new department that connects subjects and teachers.',
+            'submit_label': 'Create Department',
+        },
+    )
+
+
+@login_required
+@user_passes_test(is_top_management)
+def department_edit(request, pk):
+    department = get_object_or_404(Department, pk=pk)
+
+    if request.method == 'POST':
+        form = DepartmentForm(request.POST, instance=department)
+        if form.is_valid():
+            department = form.save()
+            messages.success(request, f'{department.name} updated successfully.')
+            return redirect('department_list')
+    else:
+        form = DepartmentForm(instance=department)
+
+    return render(
+        request,
+        'dashboard/department_form.html',
+        {
+            'form': form,
+            'department': department,
+            'page_heading': f'Edit {department.name}',
+            'page_description': 'Update department details and description.',
+            'submit_label': 'Save Changes',
         },
     )

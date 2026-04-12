@@ -38,7 +38,7 @@
                         <select name="department" class="form-select form-select-sm">
                             <option value="">All Departments</option>
                             {% for dept in all_departments %}
-                                <option value="{{ dept }}" {% if department == dept %}selected{% endif %}>{{ dept }}</option>
+                                <option value="{{ dept.pk }}" {% if department == dept.pk|stringformat:"s" %}selected{% endif %}>{{ dept.name }}</option>
                             {% endfor %}
                         </select>
                     </div>

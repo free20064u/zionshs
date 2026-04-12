@@ -27,6 +27,10 @@
                     </div>
                 </div>
                 <div class="profile-item">
+                    <span class="profile-label">House Master</span>
+                    <div class="fw-bold">{{ house.house_teacher.user.get_full_name|default:"Not assigned" }}</div>
+                </div>
+                <div class="profile-item">
                     <span class="profile-label">Students</span>
                     <div class="fw-bold">{{ house.students.count }}</div>
                 </div>

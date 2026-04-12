@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title|default:"Department List" }} | WBM Zion SHS{% endblock %}
+
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <span class="eyebrow">Dashboard Access</span>
+        <h1>{{ page_title|default:"Academic Departments" }}</h1>
+        <p class="lead mb-0">{{ page_subtitle|default:"Manager access to departments from the dashboard." }}</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="manager-list-card">
+            <div class="manager-list-head">
+                <div>
+                    <h2 class="h4 mb-0">Registered Departments</h2>
+                    <p class="manager-list-meta">A cleaner department register for curriculum oversight and quick drill-down.</p>
+                </div>
+                <div>
+                     <span class="manager-list-pill me-2">{{ departments.paginator.count }} Total</span>
+                     <a href="{% url 'department_create' %}" class="btn btn-sm btn-primary">Add Department</a>
+                </div>
+            </div>
+
+            <div class="manager-kpi-grid">
+                <div class="manager-kpi-card">
+                    <span class="manager-kpi-label">Displayed Departments</span>
+                    <strong>{{ departments.object_list|length }}</strong>
+                </div>
+            </div>
+
+            <div class="table-responsive manager-table-shell">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Department Name</th>
+                            <th>Description</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for department in departments %}
+                            <tr>
+                                <td class="manager-record-title">{{ department.name }}</td>
+                                <td class="manager-record-subtle">{{ department.description|truncatechars:50|default:"-" }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'department_edit' department.pk %}" class="btn btn-sm btn-outline-primary manager-table-action">Edit</a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-4 text-muted">No departments found in the database.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="manager-list-footer">
+                {% if departments.has_other_pages %}
+                    <div class="manager-pagination">
+                        {% if departments.has_previous %}
+                            <a class="manager-pagination-link" href="?page=1">First</a>
+                            <a class="manager-pagination-link" href="?page={{ departments.previous_page_number }}">Previous</a>
+                        {% endif %}
+                        <span class="manager-pagination-current">{{ departments.number }}</span>
+                        {% if departments.has_next %}
+                            <a class="manager-pagination-link" href="?page={{ departments.next_page_number }}">Next</a>
+                            <a class="manager-pagination-link" href="?page={{ departments.paginator.num_pages }}">Last</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
