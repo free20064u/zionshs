@@ -13,8 +13,8 @@ class ResponsibilityAdmin(admin.ModelAdmin):
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):
     form = TeacherAdminForm
-    list_display = ('staff_id', 'teacher_name', 'email', 'department', 'subject_specialty', 'date_hired')
-    list_filter = ('department', 'date_hired', 'responsibilities')
+    list_display = ('staff_id', 'teacher_name', 'email', 'department', 'house', 'subject_specialty', 'date_hired')
+    list_filter = ('department', 'house', 'date_hired', 'responsibilities')
     search_fields = (
         'staff_id',
         'user__email',
@@ -23,12 +23,13 @@ class TeacherAdmin(admin.ModelAdmin):
         'department',
         'subject_specialty',
     )
-    autocomplete_fields = ('responsibilities',)
+    autocomplete_fields = ('subjects_taught', 'classes_taught')
 
     def get_fieldsets(self, request, obj=None):
         return (
             ('Login Account', {'fields': ('email', 'first_name', 'last_name', 'gender', 'profile_picture')}),
-            ('Teacher Account', {'fields': ('staff_id', 'department', 'subject_specialty')}),
+            ('Teacher Account', {'fields': ('staff_id', 'department', 'subject_specialty', 'house')}),
+            ('Teaching Assignments', {'fields': ('subjects_taught', 'classes_taught')}),
             ('Employment Details', {'fields': ('date_hired', 'phone_number', 'responsibilities')}),
         )
 

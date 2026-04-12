@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}WBM Zion SHS{% endblock %}</title>
     <link rel="icon" type="image/png" href="{% static 'images/wbm-logo-white.png' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/site.css' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
@@ -71,9 +74,16 @@
 
     <main>
         {% if messages %}
-            <section class="container section-sm">
+            <section class="messages-section container section-sm">
                 {% for message in messages %}
-                    <div class="alert alert-success">{{ message }}</div>
+                    <div class="site-alert site-alert-{{ message.tags }}">
+                        <span class="site-alert-icon" aria-hidden="true">
+                            {% if message.tags == 'error' %}✕
+                            {% elif message.tags == 'warning' %}⚠
+                            {% else %}✓{% endif %}
+                        </span>
+                        {{ message }}
+                    </div>
                 {% endfor %}
             </section>
         {% endif %}

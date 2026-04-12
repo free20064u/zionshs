@@ -20,6 +20,13 @@
                     <div class="fw-bold">{{ house.name }}</div>
                 </div>
                 <div class="profile-item">
+                    <span class="profile-label">House Color</span>
+                    <div class="fw-bold d-flex align-items-center gap-2">
+                        <span style="display:inline-block;width:1rem;height:1rem;border-radius:999px;background: {{ house.color }};"></span>
+                        {{ house.color }}
+                    </div>
+                </div>
+                <div class="profile-item">
                     <span class="profile-label">Students</span>
                     <div class="fw-bold">{{ house.students.count }}</div>
                 </div>
@@ -35,6 +42,9 @@
             </div>
 
             <div class="mt-4 border-top pt-4">
+                {% if can_manage_houses %}
+                    <a href="{% url 'house_edit' house.pk %}" class="btn btn-primary">Edit House</a>
+                {% endif %}
                 <a href="{% url 'house_list' %}" class="btn btn-outline-secondary">Back to Houses</a>
             </div>
         </div>

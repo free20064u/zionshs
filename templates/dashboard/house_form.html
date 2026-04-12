@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_heading }} | WBM Zion SHS{% endblock %}
+
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <span class="eyebrow">Dashboard Access</span>
+        <h1>{{ page_heading }}</h1>
+        <p class="lead mb-0">{{ page_description }}</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="manager-list-card">
+            <form method="post" novalidate class="modern-form">
+                {% csrf_token %}
+                <div class="row g-4">
+                    {% for field in form %}
+                        {% if field.name == 'color_preset' %}
+                            <div class="col-md-6">
+                                <div class="form-field-group">
+                                    <label class="form-label" for="{{ field.id_for_label }}">Common Colors</label>
+                                    {{ field }}
+                                    <small class="form-help">Pick a preset color or use the color picker for a custom shade.</small>
+                                    {% for error in field.errors %}
+                                        <div class="form-feedback text-danger bg-danger-subtle border border-danger-subtle">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% elif field.name == 'color' %}
+                            <div class="col-md-6">
+                                <div class="form-field-group">
+                                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                    <small class="form-help">Use the color picker if the preset list does not have the color you want.</small>
+                                    {% for error in field.errors %}
+                                        <div class="form-feedback text-danger bg-danger-subtle border border-danger-subtle">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="{% if field.name == 'description' %}col-12{% else %}col-md-6{% endif %}">
+                                <div class="form-field-group">
+                                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <small class="form-help">{{ field.help_text }}</small>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                        <div class="form-feedback text-danger bg-danger-subtle border border-danger-subtle">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="mt-3">
+                        {% for error in form.non_field_errors %}
+                            <div class="form-feedback text-danger bg-danger-subtle border border-danger-subtle">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">{{ submit_label }}</button>
+                    <a href="{% if house %}{% url 'house_detail' house.pk %}{% else %}{% url 'house_list' %}{% endif %}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<script>
+    (() => {
+        const presetField = document.getElementById('{{ form.color_preset.id_for_label }}');
+        const colorField = document.getElementById('{{ form.color.id_for_label }}');
+
+        if (!presetField || !colorField) {
+            return;
+        }
+
+        presetField.addEventListener('change', () => {
+            if (presetField.value) {
+                colorField.value = presetField.value;
+            }
+        });
+
+        colorField.addEventListener('input', () => {
+            const matchingOption = Array.from(presetField.options).find(
+                (option) => option.value.toLowerCase() === colorField.value.toLowerCase()
+            );
+            presetField.value = matchingOption ? matchingOption.value : '';
+        });
+    })();
+</script>
+{% endblock %}

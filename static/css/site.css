@@ -1,22 +1,87 @@
+/* =========================================================
+   DESIGN TOKENS
+   ========================================================= */
 :root {
-    --brand-purple: #6f42c1;
+    /* Brand */
+    --brand-purple:       #6f42c1;
+    --brand-purple-dark:  #882471;
+    --brand-purple-deep:  #2f1847;
     --brand-purple-light: #f3effb;
+    --brand-gold:         #d6af36;
+    --brand-gold-light:   #fff3c4;
+    --brand-green:        #2f8f5b;
+
+    /* Typography */
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+    /* Surface colours */
+    --clr-bg:             #f5f6fa;
+    --clr-surface:        #ffffff;
+    --clr-surface-subtle: rgba(255,255,255,0.85);
+    --clr-border:         rgba(111,66,193,0.10);
+    --clr-border-strong:  rgba(111,66,193,0.22);
+
+    /* Text colours */
+    --clr-text-primary:   #1e1333;
+    --clr-text-secondary: #4a5568;
+    --clr-text-muted:     #7a5b92;
+
+    /* Radii */
+    --radius-sm:   0.5rem;
+    --radius-md:   0.9rem;
+    --radius-lg:   1.35rem;
+    --radius-xl:   1.75rem;
+    --radius-pill: 999px;
+
+    /* Shadows */
+    --shadow-xs:  0 1px 3px rgba(15,23,42,0.06);
+    --shadow-sm:  0 4px 14px rgba(15,23,42,0.08);
+    --shadow-md:  0 12px 32px rgba(15,23,42,0.10);
+    --shadow-lg:  0 24px 60px rgba(15,23,42,0.12);
+    --shadow-brand: 0 8px 20px rgba(136,36,113,0.18);
+
+    /* Transitions */
+    --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --transition-fast: 0.18s var(--ease-out);
+    --transition-base: 0.28s var(--ease-out);
 }
 
-body {
-    background:
-        radial-gradient(circle at top left, rgba(136, 36, 113, 0.16), transparent 32%),
-        radial-gradient(circle at bottom right, rgba(47, 143, 91, 0.12), transparent 28%),
-        linear-gradient(180deg, #fffbea 0%, #fff3c4 100%);
+/* =========================================================
+   BASE RESET
+   ========================================================= */
+*, *::before, *::after {
+    box-sizing: border-box;
 }
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Thin, brand-tinted scrollbar for webkit browsers */
+::-webkit-scrollbar            { width: 6px; height: 6px; }
+::-webkit-scrollbar-track      { background: transparent; }
+::-webkit-scrollbar-thumb      { background: rgba(136,36,113,0.22); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover{ background: rgba(136,36,113,0.48); }
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--clr-bg);
+    color: var(--clr-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
 
 .site-header {
     position: sticky;
     top: 0;
     z-index: 1020;
-    background-color: #ffffff;
-    border-bottom: 1px solid var(--bs-border-color);
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    background-color: rgba(255, 255, 255, 0.88);
+    border-bottom: 1px solid var(--clr-border);
+    box-shadow: var(--shadow-xs);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transition: box-shadow var(--transition-fast);
 }
 
 /* Standard Bootstrap Navbar Reset */
@@ -82,11 +147,13 @@ body {
 }
 
 .nav-link {
-    font-weight: 700;
-    color: #4a5568 !important;
-    padding: 0.5rem 1rem !important;
-    border-radius: 0.5rem;
-    transition: all 0.2s ease;
+    font-weight: 600;
+    font-size: 0.925rem;
+    color: var(--clr-text-secondary) !important;
+    padding: 0.5rem 0.85rem !important;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition-fast), background var(--transition-fast);
+    letter-spacing: -0.01em;
 }
 
 .nav-actions {
@@ -99,9 +166,15 @@ body {
     flex-shrink: 0;
 }
 
-.nav-link:hover, .nav-link.active {
-    color: #882471 !important;
-    background-color: rgba(136, 36, 113, 0.05);
+.nav-link:hover {
+    color: var(--brand-purple-dark) !important;
+    background-color: rgba(136, 36, 113, 0.06);
+}
+
+.nav-link.active {
+    color: var(--brand-purple-dark) !important;
+    background-color: rgba(136, 36, 113, 0.08);
+    font-weight: 700;
 }
 
 .nav-link.nav-muted {

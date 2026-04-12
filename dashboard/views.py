@@ -7,7 +7,7 @@ from django.urls import reverse
 from school.forms import ProgrammeForm
 from school.models import Programme as CourseProgramme
 from school.models import Subject
-from students.forms import StudentAdminForm
+from students.forms import HouseForm, StudentAdminForm
 from students.models import House, Programme, SchoolClass, Student
 from teachers.forms import ResponsibilityForm, TeacherAdminForm
 from teachers.models import Responsibility
@@ -19,6 +19,15 @@ TOP_MANAGEMENT_ROLES = [
     'Assistant Headteacher Academic',
     'Assistant Headteacher Domestic',
     'Assistant Headteacher Administration',
+]
+TEACHER_MANAGEMENT_ROLES = [
+    'Headteacher',
+    'Assistant Headteacher Administration',
+]
+HOUSE_MANAGEMENT_ROLES = [
+    'Headteacher',
+    'Assistant Headteacher Administration',
+    'Assistant Headteacher Domestic',
 ]
 FORM_TEACHER_ROLE = Responsibility.ResponsibilityTitle.FORM_TEACHER
 
@@ -42,6 +51,18 @@ def is_top_management(user):
     if not user.is_authenticated:
         return False
     return user.is_superuser or any(title in TOP_MANAGEMENT_ROLES for title in _management_titles(user))
+
+
+def can_manage_teachers(user):
+    if not user.is_authenticated:
+        return False
+    return user.is_superuser or any(title in TEACHER_MANAGEMENT_ROLES for title in _management_titles(user))
+
+
+def can_manage_houses(user):
+    if not user.is_authenticated:
+        return False
+    return user.is_superuser or any(title in HOUSE_MANAGEMENT_ROLES for title in _management_titles(user))
 
 
 def is_form_teacher(user):
@@ -314,9 +335,34 @@ def teacher_list(request):
         'specialty': specialty,
         'all_departments': all_departments,
         'all_specialties': all_specialties,
+        'can_manage_teachers': can_manage_teachers(request.user),
         **_page_context('Teachers', 'Manager access to teaching and leadership staff records.'),
     }
     return render(request, 'dashboard/teacher_list.html', context)
+
+
+@login_required
+@user_passes_test(can_manage_teachers)
+def teacher_create(request):
+    if request.method == 'POST':
+        form = TeacherAdminForm(request.POST, request.FILES)
+        if form.is_valid():
+            teacher = form.save()
+            messages.success(request, f'Teacher account created for {teacher.user.get_full_name()}.')
+            return redirect('teacher_detail', pk=teacher.pk)
+    else:
+        form = TeacherAdminForm()
+
+    return render(
+        request,
+        'dashboard/teacher_edit.html',
+        {
+            'form': form,
+            'page_heading': 'Add Teacher',
+            'page_description': 'Create a new teacher account, assign responsibilities, and capture staff details.',
+            'submit_label': 'Create Teacher',
+        },
+    )
 
 
 @login_required
@@ -357,9 +403,61 @@ def house_list(request):
 
     context = {
         'houses': houses,
+        'can_manage_houses': can_manage_houses(request.user),
         **_page_context('Houses', 'Manager access to all school houses and their student totals.'),
     }
     return render(request, 'dashboard/house_list.html', context)
+
+
+@login_required
+@user_passes_test(can_manage_houses)
+def house_create(request):
+    if request.method == 'POST':
+        form = HouseForm(request.POST)
+        if form.is_valid():
+            house = form.save()
+            messages.success(request, f'{house.name} house created successfully.')
+            return redirect('house_detail', pk=house.pk)
+    else:
+        form = HouseForm()
+
+    return render(
+        request,
+        'dashboard/house_form.html',
+        {
+            'form': form,
+            'page_heading': 'Add House',
+            'page_description': 'Create a new school house and set its identifying color.',
+            'submit_label': 'Create House',
+        },
+    )
+
+
+@login_required
+@user_passes_test(can_manage_houses)
+def house_edit(request, pk):
+    house = get_object_or_404(House, pk=pk)
+
+    if request.method == 'POST':
+        form = HouseForm(request.POST, instance=house)
+        if form.is_valid():
+            house = form.save()
+            messages.success(request, f'{house.name} house updated successfully.')
+            return redirect('house_detail', pk=house.pk)
+    else:
+        form = HouseForm(instance=house)
+
+    return render(
+        request,
+        'dashboard/house_form.html',
+        {
+            'form': form,
+            'house': house,
+            'page_heading': f'Edit {house.name}',
+            'page_description': 'Update house details, color, and description.',
+            'submit_label': 'Save Changes',
+        },
+    )
 
 
 @login_required
@@ -556,11 +654,18 @@ def student_edit(request, pk):
 @user_passes_test(is_top_management)
 def teacher_detail(request, pk):
     teacher = get_object_or_404(Teacher, pk=pk)
-    return render(request, 'dashboard/teacher_detail.html', {'teacher': teacher})
+    return render(
+        request,
+        'dashboard/teacher_detail.html',
+        {
+            'teacher': teacher,
+            'can_manage_teachers': can_manage_teachers(request.user),
+        },
+    )
 
 
 @login_required
-@user_passes_test(is_top_management)
+@user_passes_test(can_manage_teachers)
 def teacher_edit(request, pk):
     teacher = get_object_or_404(Teacher, pk=pk)
 
@@ -601,4 +706,11 @@ def course_detail(request, pk):
 @user_passes_test(is_top_management)
 def house_detail(request, pk):
     house = get_object_or_404(House, pk=pk)
-    return render(request, 'dashboard/house_detail.html', {'house': house})
+    return render(
+        request,
+        'dashboard/house_detail.html',
+        {
+            'house': house,
+            'can_manage_houses': can_manage_houses(request.user),
+        },
+    )

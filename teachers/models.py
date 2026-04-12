@@ -37,9 +37,18 @@ class Teacher(models.Model):
     staff_id = models.CharField(max_length=30, unique=True)
     department = models.CharField(max_length=100)
     subject_specialty = models.CharField(max_length=120, blank=True)
+    house = models.ForeignKey(
+        'students.House',
+        on_delete=models.SET_NULL,
+        related_name='house_teachers',
+        null=True,
+        blank=True,
+    )
     date_hired = models.DateField(blank=True, null=True)
     phone_number = models.CharField(max_length=30, blank=True)
     responsibilities = models.ManyToManyField(Responsibility, blank=True, related_name='teachers')
+    subjects_taught = models.ManyToManyField('school.Subject', blank=True, related_name='teachers')
+    classes_taught = models.ManyToManyField('students.SchoolClass', blank=True, related_name='subject_teachers')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

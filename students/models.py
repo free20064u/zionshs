@@ -13,6 +13,7 @@ class Programme(models.TextChoices):
 
 class House(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    color = models.CharField(max_length=7, default='#6c757d')
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

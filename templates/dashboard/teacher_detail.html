@@ -40,6 +40,7 @@
                             <ul class="list-group list-group-flush mb-4">
                                 <li class="list-group-item d-flex justify-content-between"><span>Department:</span> <strong>{{ teacher.department }}</strong></li>
                                 <li class="list-group-item d-flex justify-content-between"><span>Specialty:</span> <strong>{{ teacher.subject_specialty|default:"Not specified" }}</strong></li>
+                                <li class="list-group-item d-flex justify-content-between"><span>Assigned House:</span> <strong>{% if teacher.house %}{{ teacher.house.name }}{% else %}Not assigned{% endif %}</strong></li>
                                 <li class="list-group-item d-flex justify-content-between"><span>Date Hired:</span> <strong>{{ teacher.date_hired|date:"F j, Y"|default:"Not specified" }}</strong></li>
                                 <li class="list-group-item d-flex justify-content-between"><span>Staff ID:</span> <strong>{{ teacher.staff_id }}</strong></li>
                             </ul>
@@ -54,10 +55,34 @@
                             <span class="text-muted">No specific administrative responsibilities.</span>
                         {% endfor %}
                     </div>
+
+                    <div class="mt-4">
+                        <h3>Teaching Subjects</h3>
+                        <div class="dashboard-chip-list">
+                            {% for subject in teacher.subjects_taught.all %}
+                                <span class="dashboard-chip">{{ subject.name }}</span>
+                            {% empty %}
+                                <span class="text-muted">No teaching subjects assigned.</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h3>Teaching Classes</h3>
+                        <div class="dashboard-chip-list">
+                            {% for school_class in teacher.classes_taught.all %}
+                                <span class="dashboard-chip">{{ school_class.name }}</span>
+                            {% empty %}
+                                <span class="text-muted">No teaching classes assigned.</span>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="d-flex flex-wrap gap-2 mt-4">
-                <a href="{% url 'teacher_edit' teacher.pk %}" class="btn btn-primary">Edit Teacher</a>
+                {% if can_manage_teachers %}
+                    <a href="{% url 'teacher_edit' teacher.pk %}" class="btn btn-primary">Edit Teacher</a>
+                {% endif %}
                 <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">Back to Dashboard</a>
             </div>
         </div>

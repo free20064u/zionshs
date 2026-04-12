@@ -1,0 +1,381 @@
+/* =========================================================
+   DASHBOARD.CSS — Dashboard & App-Shell Overrides
+   All design token variables are defined in site.css :root
+   ========================================================= */
+
+/* ── Site Alert Component ─────────────────────────────── */
+.messages-section {
+    padding-top: 1.25rem;
+}
+
+.site-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: var(--radius-md, 0.9rem);
+    font-weight: 500;
+    font-size: 0.92rem;
+    margin-bottom: 0.6rem;
+    border: 1px solid transparent;
+    animation: alertSlideIn 0.3s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes alertSlideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.site-alert-icon {
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+/* success (default) */
+.site-alert-success {
+    background: rgba(47, 143, 91, 0.08);
+    border-color: rgba(47, 143, 91, 0.22);
+    color: #185c38;
+}
+.site-alert-success .site-alert-icon {
+    background: rgba(47, 143, 91, 0.14);
+    color: #2f8f5b;
+}
+
+/* error */
+.site-alert-error {
+    background: rgba(190, 24, 93, 0.07);
+    border-color: rgba(190, 24, 93, 0.22);
+    color: #7c0d35;
+}
+.site-alert-error .site-alert-icon {
+    background: rgba(190, 24, 93, 0.12);
+    color: #be185d;
+}
+
+/* warning */
+.site-alert-warning {
+    background: rgba(214, 175, 54, 0.12);
+    border-color: rgba(214, 175, 54, 0.35);
+    color: #7a5c00;
+}
+.site-alert-warning .site-alert-icon {
+    background: rgba(214, 175, 54, 0.2);
+    color: #9a7300;
+}
+
+/* info */
+.site-alert-info {
+    background: rgba(111, 66, 193, 0.07);
+    border-color: rgba(111, 66, 193, 0.18);
+    color: #3b1f7a;
+}
+.site-alert-info .site-alert-icon {
+    background: rgba(111, 66, 193, 0.12);
+    color: #6f42c1;
+}
+
+/* ── Dashboard wrapper ────────────────────────────────── */
+.dashboard-showcase {
+    padding-bottom: 2rem;
+}
+
+/* ── Dashboard Panel Modern — cleaner surface ─────────── */
+.dashboard-panel-modern {
+    background: var(--clr-surface, #ffffff);
+    border: 1px solid rgba(111, 66, 193, 0.10);
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.07);
+    overflow: hidden;
+    transition: box-shadow 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.dashboard-panel-modern:hover {
+    box-shadow: 0 12px 40px rgba(136, 36, 113, 0.10);
+}
+
+/* ── Metric cards — sharper, cleaner ─────────────────── */
+.dashboard-metric-card {
+    background: #ffffff;
+    border: 1px solid rgba(111, 66, 193, 0.08);
+    border-radius: 1.25rem;
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+    padding: 1.35rem;
+    transition: transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1),
+                box-shadow 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.dashboard-metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 36px rgba(136, 36, 113, 0.13);
+}
+
+.dashboard-metric-icon {
+    background: rgba(136, 36, 113, 0.08);
+    border-radius: 0.9rem;
+    color: #882471;
+    transition: transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.dashboard-metric-card:hover .dashboard-metric-icon {
+    transform: scale(1.12) rotate(6deg);
+}
+
+/* ── Manager table — tighter link colours ─────────────── */
+.manager-table-shell a {
+    color: var(--clr-text-primary, #1e1333);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.18s ease;
+}
+
+.manager-table-shell a:hover {
+    color: #882471;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.manager-record-title {
+    font-size: 0.875rem;
+    color: var(--clr-text-primary, #1e1333);
+    font-weight: 600;
+}
+
+.manager-record-subtle {
+    font-size: 0.875rem;
+    color: var(--clr-text-muted, #7a5b92);
+}
+
+/* ── Filter form sm-inputs ────────────────────────────── */
+.manager-list-filters .form-control,
+.manager-list-filters .form-select,
+.manager-list-filters .form-control-sm,
+.manager-list-filters .form-select-sm {
+    border-radius: 0.75rem;
+    border: 1px solid rgba(136, 36, 113, 0.14);
+    background: #ffffff;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.875rem;
+    font-family: inherit;
+    color: #1e1333;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+}
+
+.manager-list-filters .form-control:focus,
+.manager-list-filters .form-select:focus,
+.manager-list-filters .form-control-sm:focus,
+.manager-list-filters .form-select-sm:focus {
+    border-color: rgba(136, 36, 113, 0.4);
+    box-shadow: 0 0 0 3px rgba(136, 36, 113, 0.1);
+    outline: none;
+}
+
+.manager-list-filters .form-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #7a5b92;
+    margin-bottom: 0.3rem;
+}
+
+/* ── Apply Filters button ─────────────────────────────── */
+.manager-list-filters .btn-primary,
+.manager-list-filters .btn-sm.btn-primary {
+    border-radius: 0.75rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    background: linear-gradient(135deg, #882471, #6f42c1);
+    border: none;
+    padding: 0.56rem 1rem;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.manager-list-filters .btn-primary:hover,
+.manager-list-filters .btn-sm.btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* ── Section-soft clean version ──────────────────────── */
+.section-soft {
+    background: rgba(245, 246, 250, 0.7);
+}
+
+/* ── Page-banner refinement ──────────────────────────── */
+.page-banner {
+    padding: 1rem 0;
+}
+
+/* ── Enroll / CTA button polish ──────────────────────── */
+.btn-enroll,
+.nav-register-btn {
+    background: linear-gradient(135deg, #882471 0%, #6f42c1 100%);
+    color: #ffffff !important;
+    padding: 0.55rem 1.25rem !important;
+    border-radius: var(--radius-md, 0.9rem);
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    border: none;
+    box-shadow: 0 4px 14px rgba(136, 36, 113, 0.28);
+    transition: opacity 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+    letter-spacing: -0.01em;
+}
+
+.btn-enroll:hover,
+.nav-register-btn:hover {
+    opacity: 0.92;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(136, 36, 113, 0.36);
+    color: #ffffff !important;
+}
+
+/* ── Dropdown polish ─────────────────────────────────── */
+.dropdown-menu {
+    border: 1px solid rgba(111, 66, 193, 0.10);
+    border-radius: 1rem;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+    padding: 0.5rem;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.96);
+}
+
+.dropdown-item {
+    border-radius: 0.65rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.55rem 0.9rem;
+    transition: background var(--transition-fast, 0.18s ease),
+                color var(--transition-fast, 0.18s ease);
+}
+
+.dropdown-item:hover {
+    background-color: rgba(136, 36, 113, 0.07);
+    color: #882471;
+}
+
+/* ── Auth card subtle inner shadow ───────────────────── */
+.auth-card-modern {
+    box-shadow: 0 4px 28px rgba(15, 23, 42, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* ── Profile summary card ─────────────────────────────── */
+.profile-summary-card {
+    background: #f5f6fa;
+    border: 1px solid rgba(111, 66, 193, 0.09);
+    border-radius: 1rem;
+}
+
+/* ── Dashboard v2 hero animation keep ─────────────────── */
+@keyframes heroGradientFlow {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ── Modern section headings ─────────────────────────── */
+.section-heading h2 {
+    letter-spacing: -0.02em;
+}
+
+/* ── Stat card refinements ───────────────────────────── */
+.stat-card {
+    background: var(--clr-surface, #ffffff);
+    border: 1px solid var(--clr-border, rgba(111,66,193,0.10));
+    box-shadow: var(--shadow-sm, 0 4px 14px rgba(15,23,42,0.08));
+    transition: transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1),
+                box-shadow 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px rgba(136, 36, 113, 0.12);
+}
+
+/* ── Info cards / feature panels ─────────────────────── */
+.info-card,
+.news-card,
+.feature-panel {
+    background: var(--clr-surface, #ffffff);
+    border: 1px solid var(--clr-border, rgba(111,66,193,0.10));
+    box-shadow: var(--shadow-sm, 0 4px 14px rgba(15,23,42,0.08));
+    transition: transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1),
+                box-shadow 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.info-card:hover,
+.news-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(136, 36, 113, 0.10);
+}
+
+/* ── Timeline refinement ─────────────────────────────── */
+.timeline-item {
+    background: var(--clr-surface, #ffffff);
+    box-shadow: var(--shadow-xs, 0 1px 3px rgba(15,23,42,0.06));
+}
+
+/* ── Back-to-dashboard button ─────────────────────────── */
+.manager-list-footer .btn-outline-secondary {
+    border-radius: var(--radius-pill, 999px);
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+    border-color: rgba(111, 66, 193, 0.2);
+    color: #6f42c1;
+    transition: background 0.18s ease, color 0.18s ease;
+}
+
+.manager-list-footer .btn-outline-secondary:hover {
+    background: rgba(111, 66, 193, 0.08);
+    color: #6f42c1;
+    border-color: rgba(111, 66, 193, 0.3);
+}
+
+/* ── Nav profile trigger ─────────────────────────────── */
+.nav-profile-trigger {
+    border-radius: var(--radius-pill, 999px);
+    transition: background var(--transition-fast, 0.18s ease);
+}
+
+.nav-profile-trigger:hover {
+    background: rgba(136, 36, 113, 0.06);
+}
+
+/* ── Form control global improvement ─────────────────── */
+.modern-form .form-control,
+.modern-form .form-select {
+    font-family: inherit;
+    letter-spacing: -0.01em;
+}
+
+/* ── Footer form input ───────────────────────────────── */
+.footer-form .form-control {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    border-radius: 0.9rem;
+    transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.footer-form .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.footer-form .form-control:focus {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: none;
+    color: #ffffff;
+}

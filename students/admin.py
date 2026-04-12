@@ -6,7 +6,7 @@ from .models import House, SchoolClass, Student
 
 @admin.register(House)
 class HouseAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'color')
     search_fields = ('name', 'description')
 
 

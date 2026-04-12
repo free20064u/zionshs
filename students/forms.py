@@ -3,7 +3,49 @@ from django import forms
 from accounts.models import CustomUser
 from accounts.services import create_managed_user
 
-from .models import Student
+from .models import House, Student
+
+
+class HouseForm(forms.ModelForm):
+    COLOR_PRESET_CHOICES = [
+        ('', 'Choose a common color'),
+        ('#dc3545', 'Red'),
+        ('#fd7e14', 'Orange'),
+        ('#ffc107', 'Yellow'),
+        ('#198754', 'Green'),
+        ('#20c997', 'Teal'),
+        ('#0dcaf0', 'Cyan'),
+        ('#0d6efd', 'Blue'),
+        ('#6610f2', 'Indigo'),
+        ('#6f42c1', 'Purple'),
+        ('#d63384', 'Pink'),
+        ('#6c757d', 'Gray'),
+        ('#212529', 'Black'),
+        ('#8b4513', 'Brown'),
+    ]
+    color_preset = forms.ChoiceField(
+        choices=COLOR_PRESET_CHOICES,
+        required=False,
+    )
+
+    class Meta:
+        model = House
+        fields = ('name', 'color', 'description')
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+            'color': forms.TextInput(attrs={'type': 'color'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        initial_color = self.initial.get('color') or getattr(self.instance, 'color', '') or '#6c757d'
+        self.fields['color'].widget.attrs.setdefault('value', initial_color)
+        preset_values = dict(self.COLOR_PRESET_CHOICES)
+        if initial_color in preset_values:
+            self.fields['color_preset'].initial = initial_color
+        for field in self.fields.values():
+            css_class = 'form-select' if isinstance(field.widget, forms.Select) else 'form-control'
+            field.widget.attrs.setdefault('class', css_class)
 
 
 class StudentAdminForm(forms.ModelForm):

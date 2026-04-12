@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}Edit {{ teacher.user.get_full_name }} | Teacher Details | WBM Zion SHS{% endblock %}
+{% block title %}{{ page_heading|default:"Edit Teacher Record" }} | WBM Zion SHS{% endblock %}
 
 {% block content %}
 <section class="page-banner">
     <div class="container">
         <span class="eyebrow">Staff Management</span>
-        <h1>Edit Teacher Record</h1>
-        <p class="lead mb-0">Update staff profile, department assignment, and leadership responsibilities for {{ teacher.user.get_full_name }}.</p>
+        <h1>{{ page_heading|default:"Edit Teacher Record" }}</h1>
+        <p class="lead mb-0">{{ page_description|default:"Update staff profile, department assignment, and leadership responsibilities." }}</p>
     </div>
 </section>
 
@@ -16,8 +16,8 @@
         <div class="manager-list-card">
             <div class="manager-list-head">
                 <div>
-                    <h2 class="h4 mb-0">{{ teacher.user.get_full_name }}</h2>
-                    <p class="manager-list-meta">Staff ID: {{ teacher.staff_id }}</p>
+                    <h2 class="h4 mb-0">{% if teacher %}{{ teacher.user.get_full_name }}{% else %}New Teacher{% endif %}</h2>
+                    <p class="manager-list-meta">{% if teacher %}Staff ID: {{ teacher.staff_id }}{% else %}Set up a new teacher profile and account access.{% endif %}</p>
                 </div>
                 <span class="manager-list-pill">Manager Access</span>
             </div>
@@ -50,8 +50,8 @@
                 {% endif %}
 
                 <div class="d-flex flex-wrap gap-2 mt-4">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                    <a href="{% url 'teacher_detail' teacher.pk %}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">{{ submit_label|default:"Save Changes" }}</button>
+                    <a href="{% if teacher %}{% url 'teacher_detail' teacher.pk %}{% else %}{% url 'teacher_list' %}{% endif %}" class="btn btn-outline-secondary">Cancel</a>
                 </div>
             </form>
         </div>
