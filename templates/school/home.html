@@ -1,41 +1,40 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Home | WBM Zion Senior High School{% endblock %}
 
 {% block content %}
-<section class="hero-section">
+<section class="hero-section" style="background: linear-gradient(rgba(76, 29, 149, 0.85), rgba(76, 29, 149, 0.85)), url('{% static 'images/hero.png' %}'); background-size: cover; background-position: center; padding: 5rem 0;">
     <div class="container">
         <div class="row align-items-center g-5">
             <div class="col-lg-6">
-                <span class="hero-tag">Admissions open for 2026/2027</span>
-                <h1>Raising confident learners for a changing world.</h1>
-                <p class="lead">WBM Zion SHS combines strong academics, character formation, and vibrant extracurricular life to help every student thrive.</p>
+                <span class="hero-tag" style="background: var(--brand-gold); color: var(--brand-purple-deep); font-weight: 800; border: none;">Admissions Open 2026/2027</span>
+                <h1 style="color: #ffffff; font-weight: 800; text-shadow: 0 4px 12px rgba(0,0,0,0.15);">Forming Leaders, Shaping Futures.</h1>
+                <p class="lead" style="color: rgba(255,255,255,0.95); font-weight: 500;">WBM Zion SHS is a premier institution dedicated to academic excellence, character development, and holistic student growth in a modern learning environment.</p>
                 <div class="hero-actions">
-                    <a class="btn btn-primary btn-lg" href="{% url 'admissions' %}">
-                        <svg class="fa-icon btn-icon" aria-hidden="true"><use href="#fa-arrow-right"></use></svg>
-                        Start Admission
+                    <a class="btn btn-primary btn-lg px-5" href="{% url 'admissions' %}" style="background: var(--brand-gold); border: none; color: var(--brand-purple-deep); font-weight: 800; border-radius: 999px;">
+                        Enroll Today
                     </a>
-                    <a class="btn btn-outline-light btn-lg" href="{% url 'academics' %}">
-                        <svg class="fa-icon btn-icon" aria-hidden="true"><use href="#fa-book-open"></use></svg>
-                        Explore Academics
+                    <a class="btn btn-outline-light btn-lg px-5" href="{% url 'academics' %}" style="border-radius: 999px; font-weight: 700;">
+                        Our Programmes
                     </a>
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="hero-card">
-                    <p class="eyebrow">Why families choose us</p>
+                <div class="hero-card" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-color: rgba(255, 255, 255, 0.22); border-radius: 2rem;">
+                    <p class="eyebrow" style="color: var(--brand-gold);">The Zion Advantage</p>
                     <ul class="feature-stack">
                         {% for feature in features %}
-                            <li>
+                            <li style="background: rgba(255,255,255,0.08); border-radius: 1.25rem;">
                                 {% if forloop.counter == 1 %}
-                                    <span class="feature-icon"><svg class="fa-icon" aria-hidden="true"><use href="#fa-users"></use></svg></span>
+                                    <span class="feature-icon" style="background: var(--brand-gold); color: var(--brand-purple-deep);"><svg class="fa-icon" aria-hidden="true"><use href="#fa-users"></use></svg></span>
                                 {% elif forloop.counter == 2 %}
-                                    <span class="feature-icon"><svg class="fa-icon" aria-hidden="true"><use href="#fa-flask"></use></svg></span>
+                                    <span class="feature-icon" style="background: var(--brand-gold); color: var(--brand-purple-deep);"><svg class="fa-icon" aria-hidden="true"><use href="#fa-flask"></use></svg></span>
                                 {% else %}
-                                    <span class="feature-icon"><svg class="fa-icon" aria-hidden="true"><use href="#fa-star"></use></svg></span>
+                                    <span class="feature-icon" style="background: var(--brand-gold); color: var(--brand-purple-deep);"><svg class="fa-icon" aria-hidden="true"><use href="#fa-star"></use></svg></span>
                                 {% endif %}
-                                <h3>{{ feature.title }}</h3>
-                                <p>{{ feature.description }}</p>
+                                <h3 style="color: #ffffff;">{{ feature.title }}</h3>
+                                <p style="color: rgba(255,255,255,0.8);">{{ feature.description }}</p>
                             </li>
                         {% endfor %}
                     </ul>

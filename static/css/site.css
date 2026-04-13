@@ -111,9 +111,9 @@ body {
 }
 
 .brand-logo {
-    height: 48px;
+    height: 54px;
     width: auto;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
 }
 
 .brand-text {
@@ -124,16 +124,16 @@ body {
 
 .brand-name {
     font-weight: 800;
-    font-size: 1.25rem;
-    color: #2f1847;
+    font-size: 1.35rem;
+    color: var(--brand-purple-deep);
 }
 
 .brand-motto {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #2f8f5b;
-    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--brand-green);
+    font-weight: 800;
 }
 
 .navbar-toggler {

@@ -41,8 +41,12 @@
                                 <td class="manager-record-title">{{ responsibility.title }}</td>
                                 <td class="manager-record-subtle">{{ responsibility.description|default:"No description added yet." }}</td>
                                 <td>{{ responsibility.teachers.count }}</td>
-                                <td>
-                                    <a href="{% url 'responsibility_edit' responsibility.pk %}" class="btn btn-sm btn-outline-primary manager-table-action">Edit</a>
+                                <td class="text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a href="{% url 'responsibility_edit' responsibility.pk %}" class="btn-icon-action action-edit" title="Edit Responsibility">
+                                            <svg><use href="#fa-pen-to-square"></use></svg>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         {% empty %}

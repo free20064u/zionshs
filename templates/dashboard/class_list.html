@@ -82,11 +82,15 @@
                                         {{ school_class.student_count }}
                                     </span>
                                 </td>
-                                <td>
-                                    <div class="d-flex gap-2">
-                                        <a href="{% url 'student_list' %}?school_class={{ school_class.pk }}" class="btn btn-sm btn-outline-primary manager-table-action">View Students</a>
+                                <td class="text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a href="{% url 'student_list' %}?school_class={{ school_class.pk }}" class="btn-icon-action action-view" title="View Students">
+                                            <svg><use href="#fa-eye"></use></svg>
+                                        </a>
                                         {% if can_manage_classes %}
-                                            <a href="{% url 'class_edit' school_class.pk %}" class="btn btn-sm btn-outline-secondary manager-table-action">Edit</a>
+                                            <a href="{% url 'class_edit' school_class.pk %}" class="btn-icon-action action-edit" title="Edit Class">
+                                                <svg><use href="#fa-pen-to-square"></use></svg>
+                                            </a>
                                         {% endif %}
                                     </div>
                                 </td>

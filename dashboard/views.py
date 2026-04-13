@@ -338,7 +338,7 @@ def teacher_list(request):
 
     # Dynamically fetch existing values for filters
     all_departments = Department.objects.all()
-    all_specialties = Teacher.objects.exclude(subject_specialty__in=['', None]).values_list('subject_specialty', flat=True).distinct().order_by('subject_specialty')
+    all_specialties = Teacher.objects.filter(subject_specialty__isnull=False).values_list('subject_specialty', flat=True).distinct().order_by('subject_specialty')
 
     paginator = Paginator(teachers, 10)
     page_number = request.GET.get('page')

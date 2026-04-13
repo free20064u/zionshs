@@ -60,8 +60,19 @@
                                 <td class="manager-record-subtle">{{ house.description|default:"No description" }}</td>
                                 <td><span class="manager-badge-soft">{{ house.students.count }}</span></td>
                                 <td class="text-end">
-                                    <a href="{% url 'house_detail' house.pk %}" class="btn btn-sm btn-outline-secondary manager-table-action">View Details</a>
-                                    <a href="{% url 'student_list' %}?house={{ house.pk }}" class="btn btn-sm btn-outline-primary manager-table-action">View Students</a>
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a href="{% url 'house_detail' house.pk %}" class="btn-icon-action action-view" title="View Details">
+                                            <svg><use href="#fa-eye"></use></svg>
+                                        </a>
+                                        <a href="{% url 'student_list' %}?house={{ house.pk }}" class="btn-icon-action action-view" title="View Students" style="background: rgba(136, 36, 113, 0.05); color: #882471; border-color: rgba(136, 36, 113, 0.15);">
+                                            <svg><use href="#fa-users"></use></svg>
+                                        </a>
+                                        {% if can_manage_houses %}
+                                            <a href="{% url 'house_edit' house.pk %}" class="btn-icon-action action-edit" title="Edit House">
+                                                <svg><use href="#fa-pen-to-square"></use></svg>
+                                            </a>
+                                        {% endif %}
+                                    </div>
                                 </td>
                             </tr>
                         {% empty %}

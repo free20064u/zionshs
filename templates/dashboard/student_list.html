@@ -67,44 +67,47 @@
                             <th>Programme</th>
                             <th>Class</th>
                             <th>House</th>
+                            <th class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for student in students %}
                             <tr>
                                 <td class="manager-record-title">
-                                    <a href="{% url 'student_detail' student.pk %}">
-                                        {{ student.admission_number }}
-                                    </a>
+                                    {{ student.admission_number }}
                                 </td>
                                 <td>
                                     <div class="manager-record-subtle">
-                                        <a href="{% url 'student_detail' student.pk %}">
-                                            {{ student.user.get_full_name }}
-                                        </a>
+                                        {{ student.user.get_full_name }}
                                     </div>
                                 </td>
                                 <td>
                                     <div class="manager-record-subtle">
-                                        <a href="{% url 'student_detail' student.pk %}">{{ student.user.email }}
-                                        </a>
+                                        {{ student.user.email }}
                                     </div>
                                 </td>
                                 <td>
                                     <span class="manager-record-title">
-                                        <a href="{% url 'student_detail' student.pk %}">
-                                            {{ student.programme }}
-                                        </a>
+                                        {{ student.programme }}
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="{% url 'student_detail' student.pk %}" class="manager-record-title">
+                                    <span class="manager-record-title">
                                         {{ student.school_class|default:"Not assigned" }}
-                                    </a>
+                                    </span>
                                 </td>
                                 <td>
-                                    <a href="{% url 'student_detail' student.pk %}" class="manager-record-title">{% if student.house %}{{ student.house.name }}{% else %}Not assigned{% endif %}
-                                    </a>
+                                    <span class="manager-record-title">{% if student.house %}{{ student.house.name }}{% else %}Not assigned{% endif %}</span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a href="{% url 'student_detail' student.pk %}" class="btn-icon-action action-view" title="View Details">
+                                            <svg><use href="#fa-eye"></use></svg>
+                                        </a>
+                                        <a href="{% url 'student_edit' student.pk %}" class="btn-icon-action action-edit" title="Edit Student">
+                                            <svg><use href="#fa-pen-to-square"></use></svg>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         {% empty %}

@@ -39,9 +39,10 @@ class Command(BaseCommand):
         self._ensure_responsibilities()
         created_subjects, created_courses, created_departments = self._ensure_subjects_and_courses(fake)
 
+        all_subjects = list(Subject.objects.all())
         created_students = self._create_students(fake, student_count, registration_year)
-        created_teachers = self._create_teachers(fake, teacher_count)
-        created_managers = self._create_management_teachers(fake, manager_count)
+        created_teachers = self._create_teachers(fake, teacher_count, all_subjects)
+        created_managers = self._create_management_teachers(fake, manager_count, all_subjects)
         created_unassigned = self._create_unassigned_users(fake, unassigned_count)
 
         # Assign house masters
@@ -182,9 +183,8 @@ class Command(BaseCommand):
 
         return created
 
-    def _create_teachers(self, fake, count):
+    def _create_teachers(self, fake, count, all_subjects):
         departments = list(Department.objects.all())
-        all_subjects = list(Subject.objects.all())
         responsibilities = list(Responsibility.objects.all())
         house_teacher_responsibility = Responsibility.objects.filter(title='House Teacher').first()
         created = 0
@@ -238,7 +238,7 @@ class Command(BaseCommand):
 
         return created
 
-    def _create_management_teachers(self, fake, count):
+    def _create_management_teachers(self, fake, count, all_subjects):
         management_titles = [
             Responsibility.ResponsibilityTitle.HEADTEACHER,
             Responsibility.ResponsibilityTitle.ASSISTANT_HEADTEACHER_ACADEMIC,

@@ -66,41 +66,46 @@
                             <th>Email</th>
                             <th>Department</th>
                             <th>Specialty</th>
+                            <th class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for teacher in teachers %}
                             <tr>
                                 <td class="manager-record-title">
-                                    <a href="{% url 'teacher_detail' teacher.pk %}">
-                                        {{ teacher.staff_id }}
-                                    </a>
+                                    {{ teacher.staff_id }}
                                 </td>
                                 <td>
                                     <div class="manager-record-title">
-                                        <a href="{% url 'teacher_detail' teacher.pk %}">
-                                            {{ teacher.user.get_full_name }}
-                                        </a>
+                                        {{ teacher.user.get_full_name }}
                                     </div>   
                                 </td>
                                 <td>
                                     <div class="manager-record-subtle">
-                                        <a href="{% url 'teacher_detail' teacher.pk %}">
-                                            {{ teacher.user.email }}
-                                        </a>
+                                        {{ teacher.user.email }}
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="">
-                                        <a href="{% url 'teacher_detail' teacher.pk %}">
-                                            {{ teacher.department }}
-                                        </a>
+                                    <span class="manager-record-subtle">
+                                        {{ teacher.department }}
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="{% url 'teacher_detail' teacher.pk %}">
+                                    <span class="manager-record-subtle">
                                         {{ teacher.subject_specialty|default:"Not assigned" }}
-                                    </a>
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a href="{% url 'teacher_detail' teacher.pk %}" class="btn-icon-action action-view" title="View Details">
+                                            <svg><use href="#fa-eye"></use></svg>
+                                        </a>
+                                        {% if can_manage_teachers %}
+                                            <a href="{% url 'teacher_edit' teacher.pk %}" class="btn-icon-action action-edit" title="Edit Teacher">
+                                                <svg><use href="#fa-pen-to-square"></use></svg>
+                                            </a>
+                                        {% endif %}
+                                    </div>
                                 </td>
                             </tr>
                         {% empty %}

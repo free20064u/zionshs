@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}WBM Zion SHS{% endblock %}</title>
-    <link rel="icon" type="image/png" href="{% static 'images/wbm-logo-white.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/wbm-logo-purple.png' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
@@ -44,7 +44,9 @@
                                     {% if user.profile_picture %}
                                         <img src="{{ user.profile_picture.url }}" alt="{{ user.first_name }}" class="nav-avatar">
                                     {% else %}
-                                        <img src="{% static 'images/wbm-logo-purple.png' %}" alt="Default Avatar" class="nav-avatar">
+                                        <div class="nav-avatar-placeholder">
+                                            <svg class="fa-icon"><use href="#fa-user"></use></svg>
+                                        </div>
                                     {% endif %}
                                     <span class="nav-username d-none d-lg-inline ms-2">{{ user.first_name|default:user.email }}</span>
                                 </button>
@@ -108,7 +110,7 @@
         <div class="container footer-main">
             <div class="footer-brand-block">
                 <div class="footer-brand">
-                    <img class="footer-logo" src="{% static 'images/wbm-logo-white.png' %}" alt="WBM Zion SHS white logo">
+                    <img class="footer-logo" src="{% static 'images/wbm-logo-white.png' %}" alt="WBM Zion SHS logo">
                     <div>
                         <h3 class="mt-3">WBM Zion SHS</h3>
                     </div>

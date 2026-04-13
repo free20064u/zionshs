@@ -49,7 +49,14 @@
                                 <td class="manager-record-subtle">{{ course.description|truncatewords:20 }}</td>
                                 <td><span class="manager-badge-soft">{{ course.subjects.count }}</span></td>
                                 <td class="text-end">
-                                    <a href="{% url 'course_detail' course.pk %}" class="btn btn-sm btn-outline-primary manager-table-action">View</a>
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a href="{% url 'course_detail' course.pk %}" class="btn-icon-action action-view" title="View Details">
+                                            <svg><use href="#fa-eye"></use></svg>
+                                        </a>
+                                        <a href="{% url 'course_edit' course.pk %}" class="btn-icon-action action-edit" title="Edit Course">
+                                            <svg><use href="#fa-pen-to-square"></use></svg>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         {% empty %}

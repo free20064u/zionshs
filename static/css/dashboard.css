@@ -409,6 +409,12 @@
     100% { background-position: 0%   50%; }
 }
 
+@keyframes dbHeroFlow {
+    0%   { background-position: 0%   50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0%   50%; }
+}
+
 /* Subtle noise/grid overlay */
 .db-hero::before {
     content: "";
@@ -604,16 +610,16 @@
 /* ── Card Grid ──────────────────────────────────────────── */
 .db-card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1.1rem;
+    grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+    gap: 0.75rem;
 }
 
 /* ── Base Card ──────────────────────────────────────────── */
 .db-card {
     position: relative;
     overflow: hidden;
-    border-radius: 1.35rem;
-    padding: 1.5rem 1.4rem;
+    border-radius: 0.85rem;
+    padding: 0.9rem 0.85rem;
     border: none;
     color: #ffffff;
     text-decoration: none !important;
@@ -627,17 +633,17 @@
 a.db-card { cursor: pointer; }
 
 .db-card:hover {
-    transform: translateY(-7px) scale(1.01);
-    box-shadow: 0 22px 50px rgba(15,23,42,0.18) !important;
+    transform: translateY(-5px) scale(1.01);
+    box-shadow: 0 16px 36px rgba(15,23,42,0.15) !important;
 }
 
 /* Shine bubble — decorative orb top-right */
 .db-card-shine {
     position: absolute;
-    top: -1.5rem;
-    right: -1.5rem;
-    width: 7rem;
-    height: 7rem;
+    top: -1.2rem;
+    right: -1.2rem;
+    width: 6rem;
+    height: 6rem;
     border-radius: 50%;
     background: rgba(255,255,255,0.10);
     pointer-events: none;
@@ -650,14 +656,14 @@ a.db-card { cursor: pointer; }
 
 /* ── Card Icon ──────────────────────────────────────────── */
 .db-card-icon {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 1rem;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 0.8rem;
     background: rgba(255,255,255,0.18);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 1.1rem;
+    margin-bottom: 0.85rem;
     transition: transform 0.24s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
@@ -667,20 +673,20 @@ a.db-card { cursor: pointer; }
 
 /* ── Card Text ──────────────────────────────────────────── */
 .db-card-value {
-    font-size: clamp(1.45rem, 2.8vw, 2rem);
+    font-size: 1.45rem;
     font-weight: 800;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.02em;
     line-height: 1.1;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.25rem;
     color: #ffffff;
     word-break: break-word;
 }
 
 .db-card-label {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.09em;
+    letter-spacing: 0.08em;
     color: rgba(255,255,255,0.78);
 }
 
@@ -806,3 +812,53 @@ a.db-card { cursor: pointer; }
     z-index: 10;
 }
 
+
+/* ── Table Action Buttons Modern ─────────────────────────── */
+.btn-icon-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.45rem;
+    height: 1.45rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(136, 36, 113, 0.12);
+    background: #ffffff;
+    color: #882471;
+    transition: all 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
+    padding: 0;
+    text-decoration: none !important;
+}
+
+.btn-icon-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.1);
+}
+
+.action-view {
+    color: #4338ca;
+    background: rgba(67, 56, 202, 0.07);
+    border-color: rgba(67, 56, 202, 0.18);
+}
+
+.action-view:hover {
+    background: #4338ca;
+    color: #ffffff;
+    border-color: #4338ca;
+}
+
+.action-edit {
+    color: #c2410c;
+    background: rgba(194, 65, 12, 0.07);
+    border-color: rgba(194, 65, 12, 0.18);
+}
+
+.action-edit:hover {
+    background: #c2410c;
+    color: #ffffff;
+    border-color: #c2410c;
+}
+
+.btn-icon-action svg {
+    width: 0.75rem;
+    height: 0.75rem;
+}
