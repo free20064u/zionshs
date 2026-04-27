@@ -12,7 +12,9 @@
         <div class="db-hero-inner">
             <div class="db-hero-copy">
                 <span class="db-hero-kicker">
-                    <svg class="fa-icon" style="width:13px;height:13px;" aria-hidden="true"><use href="#fa-shield-check"></use></svg>
+                    <svg class="fa-icon" style="width:13px;height:13px;" aria-hidden="true">
+                        <use href="#fa-shield-check"></use>
+                    </svg>
                     Secure Dashboard
                 </span>
                 <h1 class="db-hero-title">
@@ -23,11 +25,15 @@
             </div>
             <div class="db-hero-meta">
                 <div class="db-meta-pill">
-                    <svg class="fa-icon" style="width:14px;height:14px;" aria-hidden="true"><use href="#fa-user"></use></svg>
+                    <svg class="fa-icon" style="width:14px;height:14px;" aria-hidden="true">
+                        <use href="#fa-user"></use>
+                    </svg>
                     {{ user.role|title }}
                 </div>
                 <div class="db-meta-pill">
-                    <svg class="fa-icon" style="width:14px;height:14px;" aria-hidden="true"><use href="#fa-graduation-cap"></use></svg>
+                    <svg class="fa-icon" style="width:14px;height:14px;" aria-hidden="true">
+                        <use href="#fa-graduation-cap"></use>
+                    </svg>
                     WBM Zion SHS
                 </div>
             </div>
@@ -45,7 +51,9 @@
             <div class="db-panel">
                 <div class="db-panel-header">
                     <span class="db-tag db-tag-purple">
-                        <svg class="fa-icon" style="width:11px;height:11px;" aria-hidden="true"><use href="#fa-graduation-cap"></use></svg>
+                        <svg class="fa-icon" style="width:11px;height:11px;" aria-hidden="true">
+                            <use href="#fa-graduation-cap"></use>
+                        </svg>
                         Student Statistics
                     </span>
                     <h2 class="db-panel-title">My Academic Profile</h2>
@@ -53,7 +61,9 @@
                 <div class="db-card-grid">
                     <div class="db-card db-card-1">
                         <div class="db-card-icon">
-                            <svg class="fa-icon" style="width:22px;height:22px;"><use href="#fa-graduation-cap"></use></svg>
+                            <svg class="fa-icon" style="width:22px;height:22px;">
+                                <use href="#fa-graduation-cap"></use>
+                            </svg>
                         </div>
                         <div class="db-card-value">{{ student_profile.programme|default:'Pending' }}</div>
                         <div class="db-card-label">Programme</div>
@@ -61,7 +71,9 @@
                     </div>
                     <div class="db-card db-card-2">
                         <div class="db-card-icon">
-                            <svg class="fa-icon" style="width:22px;height:22px;"><use href="#fa-book-open"></use></svg>
+                            <svg class="fa-icon" style="width:22px;height:22px;">
+                                <use href="#fa-book-open"></use>
+                            </svg>
                         </div>
                         <div class="db-card-value">{{ student_profile.school_class|default:'Pending' }}</div>
                         <div class="db-card-label">Current Class</div>
@@ -69,7 +81,9 @@
                     </div>
                     <div class="db-card db-card-3">
                         <div class="db-card-icon">
-                            <svg class="fa-icon" style="width:22px;height:22px;"><use href="#fa-users"></use></svg>
+                            <svg class="fa-icon" style="width:22px;height:22px;">
+                                <use href="#fa-users"></use>
+                            </svg>
                         </div>
                         <div class="db-card-value">{{ student_profile.admission_number|default:'N/A' }}</div>
                         <div class="db-card-label">Admission No.</div>
@@ -77,9 +91,12 @@
                     </div>
                     <div class="db-card db-card-4">
                         <div class="db-card-icon">
-                            <svg class="fa-icon" style="width:22px;height:22px;"><use href="#fa-trophy"></use></svg>
+                            <svg class="fa-icon" style="width:22px;height:22px;">
+                                <use href="#fa-trophy"></use>
+                            </svg>
                         </div>
-                        <div class="db-card-value">{% if student_profile.house %}{{ student_profile.house.name }}{% else %}N/A{% endif %}</div>
+                        <div class="db-card-value">{% if student_profile.house %}{{ student_profile.house.name }}{% else
+                            %}N/A{% endif %}</div>
                         <div class="db-card-label">House</div>
                         <div class="db-card-shine"></div>
                     </div>
@@ -92,7 +109,9 @@
             <div class="db-panel">
                 <div class="db-panel-header">
                     <span class="db-tag db-tag-green">
-                        <svg class="fa-icon" style="width:11px;height:11px;" aria-hidden="true"><use href="#fa-book-open"></use></svg>
+                        <svg class="fa-icon" style="width:11px;height:11px;" aria-hidden="true">
+                            <use href="#fa-book-open"></use>
+                        </svg>
                         Form Teacher
                     </span>
                     <h2 class="db-panel-title">Assigned Classes</h2>
@@ -101,7 +120,9 @@
                     {% for school_class in assigned_form_classes %}
                     <a href="{% url 'class_list' %}" class="db-card db-card-{{ forloop.counter }} text-decoration-none">
                         <div class="db-card-icon">
-                            <svg class="fa-icon" style="width:22px;height:22px;"><use href="#fa-book-open"></use></svg>
+                            <svg class="fa-icon" style="width:22px;height:22px;">
+                                <use href="#fa-book-open"></use>
+                            </svg>
                         </div>
                         <div class="db-card-value">{{ school_class.name }}</div>
                         <div class="db-card-label">{{ school_class.student_count }} Students</div>
@@ -114,32 +135,35 @@
 
             {# Responsibility Panels #}
             {% if responsibility_panels %}
-                {% for panel in responsibility_panels %}
-                <div class="db-panel">
-                    <div class="db-panel-header">
-                        <span class="db-tag db-tag-amber">
-                            <svg class="fa-icon" style="width:11px;height:11px;" aria-hidden="true"><use href="#fa-shield-check"></use></svg>
-                            Responsibility
-                        </span>
-                        <h2 class="db-panel-title">{{ panel.title }}</h2>
-                    </div>
-                    <div class="db-card-grid">
-                        {% for stat in panel.stats %}
-                        <{% if stat.url %}a href="{{ stat.url }}"{% else %}div{% endif %} class="db-card db-card-{{ forloop.counter }} text-decoration-none">
-                            <div class="db-card-icon">
-                                <svg class="fa-icon" style="width:22px;height:22px;"><use href="#{{ stat.icon }}"></use></svg>
-                            </div>
-                            <div class="db-card-value">{{ stat.value }}</div>
-                            <div class="db-card-label">{{ stat.label }}</div>
-                            <div class="db-card-shine"></div>
-                        </{% if stat.url %}a{% else %}div{% endif %}>
-                        {% endfor %}
-                    </div>
+            {% for panel in responsibility_panels %}
+            <div class="db-panel">
+                <div class="db-panel-header">
+                    <span class="db-tag db-tag-amber">
+                        <svg class="fa-icon" style="width:11px;height:11px;" aria-hidden="true">
+                            <use href="#fa-shield-check"></use>
+                        </svg>
+                        Responsibility
+                    </span>
+                    <h2 class="db-panel-title">{{ panel.title }}</h2>
                 </div>
-                {% endfor %}
+                <div class="db-card-grid">
+                    {% for stat in panel.stats %}
+                    <{% if stat.url %}a href="{{ stat.url }}" {% else %}div{% endif %}
+                        class="db-card db-card-{{ forloop.counter }} text-decoration-none">
+                        <div class="db-card-icon">
+                            <svg class="fa-icon" style="width:22px;height:22px;">
+                                <use href="#{{ stat.icon }}"></use>
+                            </svg>
+                        </div>
+                        <div class="db-card-value">{{ stat.value }}</div>
+                        <div class="db-card-label">{{ stat.label }}</div>
+                        <div class="db-card-shine"></div>
+                    </{% if stat.url %}a{% else %}div{% endif %}>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
             {% endif %}
-
-
         </div>{# /db-showcase #}
     </div>
 </section>

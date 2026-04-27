@@ -20,7 +20,12 @@
                     <p class="manager-list-meta">A cleaner subject register for curriculum oversight and quick
                         drill-down.</p>
                 </div>
-                <span class="manager-list-pill">{{ subjects.paginator.count }} Total</span>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="manager-list-pill">{{ subjects.paginator.count }} Total</span>
+                    {% if can_manage_subjects %}
+                    <a href="{% url 'subject_create' %}" class="btn btn-sm btn-primary">Add Subject</a>
+                    {% endif %}
+                </div>
             </div>
 
             <div class="manager-list-filters mb-4 px-3">
@@ -64,6 +69,11 @@
                                     <a href="{% url 'subject_detail' subject.pk %}" class="btn-icon-action action-view" title="View Details">
                                         <svg><use href="#fa-eye"></use></svg>
                                     </a>
+                                    {% if can_manage_subjects %}
+                                    <a href="{% url 'subject_edit' subject.pk %}" class="btn-icon-action action-edit" title="Edit Subject">
+                                        <svg><use href="#fa-pen"></use></svg>
+                                    </a>
+                                    {% endif %}
                                 </div>
                             </td>
                         </tr>

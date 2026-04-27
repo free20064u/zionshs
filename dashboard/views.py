@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from school.forms import ProgrammeForm, DepartmentForm
+from school.forms import ProgrammeForm, DepartmentForm, SubjectForm
 from school.models import Programme as CourseProgramme, Department
 from school.models import Subject
 from students.forms import HouseForm, StudentAdminForm, SchoolClassForm
@@ -28,6 +28,10 @@ CLASS_MANAGEMENT_ROLES = [
     'Headteacher',
     'Assistant Headteacher Academic',
     'Assistant Headteacher Administration',
+]
+SUBJECT_MANAGEMENT_ROLES = [
+    'Headteacher',
+    'Assistant Headteacher Academic',
 ]
 HOUSE_MANAGEMENT_ROLES = [
     'Headteacher',
@@ -66,6 +70,12 @@ def can_manage_classes(user):
     if not user.is_authenticated:
         return False
     return user.is_superuser or any(title in CLASS_MANAGEMENT_ROLES for title in _management_titles(user))
+
+
+def can_manage_subjects(user):
+    if not user.is_authenticated:
+        return False
+    return user.is_superuser or any(title in SUBJECT_MANAGEMENT_ROLES for title in _management_titles(user))
 
 
 def can_manage_houses(user):
@@ -148,6 +158,7 @@ def dashboard_view(request):
             }
         )
 
+    department_name = None
     department_teacher_total = 0
     department_student_total = 0
     department_class_total = 0
@@ -163,6 +174,26 @@ def dashboard_view(request):
             SchoolClass.objects.filter(form_teacher=teacher_profile)
             .prefetch_related('students')
             .order_by('registration_year', 'programme', 'stream')
+        )
+
+    administration_stats = [
+        {'label': 'Assigned Students', 'value': school_stats['assigned_student_total'], 'url': f"{reverse('student_list')}?assignment=assigned", 'icon': 'fa-users'},
+        {'label': 'Teacher Accounts', 'value': school_stats['teacher_total'], 'url': reverse('teacher_list'), 'icon': 'fa-users'},
+        {'label': 'School Classes', 'value': school_stats['class_total'], 'url': reverse('class_list'), 'icon': 'fa-book-open'},
+        {'label': 'Courses', 'value': school_stats['course_total'], 'url': reverse('course_list'), 'icon': 'fa-book-open'},
+        {'label': 'Subjects', 'value': school_stats['subject_total'], 'url': reverse('subject_list'), 'icon': 'fa-star'},
+        {'label': 'Departments', 'value': school_stats['department_total'], 'url': reverse('department_list'), 'icon': 'fa-building'},
+        {'label': 'Responsibilities', 'value': school_stats['responsibility_total'], 'url': reverse('responsibility_list'), 'icon': 'fa-shield-check'},
+    ]
+    if user.role != 'Teacher':
+        administration_stats.insert(
+            1,
+            {
+                'label': 'Unassigned Students',
+                'value': school_stats['unassigned_student_total'],
+                'url': f"{reverse('student_list')}?assignment=unassigned",
+                'icon': 'fa-users',
+            },
         )
 
     panel_map = {
@@ -182,6 +213,7 @@ def dashboard_view(request):
         'Assistant Headteacher Academic': {
             'title': 'Academic Leadership',
             'stats': programme_stats + [
+                {'label': 'Classes', 'value': school_stats['class_total'], 'url': reverse('class_list'), 'icon': 'fa-book-open'},
                 {'label': 'Courses', 'value': school_stats['course_total'], 'url': reverse('course_list'), 'icon': 'fa-book-open'},
                 {'label': 'Subjects', 'value': school_stats['subject_total'], 'url': reverse('subject_list'), 'icon': 'fa-star'},
             ],
@@ -192,16 +224,7 @@ def dashboard_view(request):
         },
         'Assistant Headteacher Administration': {
             'title': 'Administrative Leadership',
-            'stats': [
-                {'label': 'Assigned Students', 'value': school_stats['assigned_student_total'], 'url': f"{reverse('student_list')}?assignment=assigned", 'icon': 'fa-users'},
-                {'label': 'Unassigned Students', 'value': school_stats['unassigned_student_total'], 'url': f"{reverse('student_list')}?assignment=unassigned", 'icon': 'fa-users'},
-                {'label': 'Teacher Accounts', 'value': school_stats['teacher_total'], 'url': reverse('teacher_list'), 'icon': 'fa-users'},
-                {'label': 'School Classes', 'value': school_stats['class_total'], 'url': reverse('class_list'), 'icon': 'fa-book-open'},
-                {'label': 'Courses', 'value': school_stats['course_total'], 'url': reverse('course_list'), 'icon': 'fa-book-open'},
-                {'label': 'Subjects', 'value': school_stats['subject_total'], 'url': reverse('subject_list'), 'icon': 'fa-star'},
-                {'label': 'Departments', 'value': school_stats['department_total'], 'url': reverse('department_list'), 'icon': 'fa-building'},
-                {'label': 'Responsibilities', 'value': school_stats['responsibility_total'], 'url': reverse('responsibility_list'), 'icon': 'fa-shield-check'},
-            ],
+            'stats': administration_stats,
         },
         'Head of Department': {
             'title': 'Department Leadership',
@@ -621,9 +644,61 @@ def subject_list(request):
         'q': q,
         'department_id': department_id,
         'all_departments': all_departments,
+        'can_manage_subjects': can_manage_subjects(request.user),
         **_page_context('Subjects', 'Manager access to curriculum subjects from the dashboard.'),
     }
     return render(request, 'dashboard/subject_list.html', context)
+
+
+@login_required
+@user_passes_test(can_manage_subjects)
+def subject_create(request):
+    if request.method == 'POST':
+        form = SubjectForm(request.POST)
+        if form.is_valid():
+            subject = form.save()
+            messages.success(request, f'{subject.name} created successfully.')
+            return redirect('subject_list')
+    else:
+        form = SubjectForm()
+
+    return render(
+        request,
+        'dashboard/subject_form.html',
+        {
+            'form': form,
+            'page_heading': 'Add Subject',
+            'page_description': 'Create a new subject and link it to the right department.',
+            'submit_label': 'Create Subject',
+        },
+    )
+
+
+@login_required
+@user_passes_test(can_manage_subjects)
+def subject_edit(request, pk):
+    subject = get_object_or_404(Subject, pk=pk)
+
+    if request.method == 'POST':
+        form = SubjectForm(request.POST, instance=subject)
+        if form.is_valid():
+            subject = form.save()
+            messages.success(request, f'{subject.name} updated successfully.')
+            return redirect('subject_list')
+    else:
+        form = SubjectForm(instance=subject)
+
+    return render(
+        request,
+        'dashboard/subject_form.html',
+        {
+            'form': form,
+            'subject': subject,
+            'page_heading': f'Edit {subject.name}',
+            'page_description': 'Update subject details and department assignment.',
+            'submit_label': 'Save Changes',
+        },
+    )
 
 
 @login_required
