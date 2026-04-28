@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}About | WBM Zion Senior High School {% endblock %}
 
@@ -12,19 +13,55 @@
 
 <section class="section">
     <div class="container">
-        <div class="row g-5">
+        <div class="row g-5 split-feature">
             <div class="col-lg-6">
                 <h2>Our mission</h2>
                 <p>WBM Zion Senior High School exists to nurture learners who think clearly, serve responsibly, and grow into capable leaders. Our approach combines academic depth with personal care and strong family partnership.</p>
+                <p>Every part of the school experience is designed to help students grow in confidence, discipline, creativity, and service.</p>
             </div>
             <div class="col-lg-6">
-                <div class="info-card">
+                <div class="split-visual-card">
+                    <img src="https://images.pexels.com/photos/9572464/pexels-photo-9572464.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Students studying together in a library">
+                    <div class="visual-card-caption">
+                        <span class="visual-card-badge">Community</span>
+                        <h3>Belonging and aspiration.</h3>
+                        <p>Students thrive in a culture that pairs academic ambition with care and encouragement.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-soft pt-0">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-5">
+                <div class="info-card h-100">
                     <h3>Core values</h3>
                     <ul class="icon-list">
                         {% for value in values %}
                             <li>{{ value }}</li>
                         {% endfor %}
                     </ul>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="campus-gallery">
+                    <article class="image-tile image-tile-md">
+                        <img src="https://images.pexels.com/photos/7777676/pexels-photo-7777676.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Classmates studying together in a library">
+                        <div class="image-tile-caption">
+                            <span class="visual-card-badge">Mentorship</span>
+                            <h3>Students learn together.</h3>
+                        </div>
+                    </article>
+                    <article class="image-tile image-tile-lg">
+                        <img src="{% static 'images/student_life.png' %}" alt="Students enjoying school life">
+                        <div class="image-tile-caption">
+                            <span class="visual-card-badge">Campus Culture</span>
+                            <h3>A school environment with warmth and energy.</h3>
+                        </div>
+                    </article>
                 </div>
             </div>
         </div>
@@ -58,6 +95,8 @@
                     <div class="info-card h-100 p-0 overflow-hidden">
                         {% if facility.image %}
                             <img src="{{ facility.image.url }}" alt="{{ facility.name }}" class="w-100" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <img src="https://images.pexels.com/photos/7777000/pexels-photo-7777000.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="{{ facility.name }}" class="w-100" style="height: 200px; object-fit: cover;">
                         {% endif %}
                         <div class="p-4 d-flex align-items-center gap-3">
                             <span class="feature-icon m-0"><svg class="fa-icon"><use href="#fa-check-circle"></use></svg></span>
