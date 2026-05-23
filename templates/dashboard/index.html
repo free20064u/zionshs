@@ -19,9 +19,8 @@
                 </span>
                 <h1 class="db-hero-title">
                     Welcome back,
-                    <span class="db-hero-name">{{ user.first_name|default:user.email }}</span> 👋
+                    <span class="db-hero-name">{{ user.first_name|default:user.email }}</span>
                 </h1>
-                <p class="db-hero-sub">Here's your personalised overview for WBM Zion SHS.</p>
             </div>
             <div class="db-hero-meta">
                 <div class="db-meta-pill">
@@ -137,15 +136,7 @@
             {% if responsibility_panels %}
             {% for panel in responsibility_panels %}
             <div class="db-panel">
-                <div class="db-panel-header">
-                    <span class="db-tag db-tag-amber">
-                        <svg class="fa-icon" style="width:11px;height:11px;" aria-hidden="true">
-                            <use href="#fa-shield-check"></use>
-                        </svg>
-                        Responsibility
-                    </span>
-                    <h2 class="db-panel-title">{{ panel.title }}</h2>
-                </div>
+                
                 <div class="db-card-grid">
                     {% for stat in panel.stats %}
                     <{% if stat.url %}a href="{{ stat.url }}" {% else %}div{% endif %}
